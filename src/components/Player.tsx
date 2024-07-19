@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
+import axios from "axios";
 import Search from "./Search";
-import styles from "../styles/Player.module.css"; // 스타일 파일 임포트
+import styles from "../styles/Player.module.css";
 
 const spotifyApi = new SpotifyWebApi();
 
 const Player = ({ accessToken }: { accessToken: string }) => {
   const [trackId, setTrackId] = useState<string>("");
+  const [currentTrackId, setCurrentTrackId] = useState<string>(""); // 현재 트랙 ID 상태 추가
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [player, setPlayer] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -16,6 +18,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [trackName, setTrackName] = useState<string>("");
   const [artistName, setArtistName] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [lyrics, setLyrics] = useState<string>("");
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -27,6 +30,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   useEffect(() => {
     if (accessToken) {
       spotifyApi.setAccessToken(accessToken);
+      console.log("Access token set:", accessToken);
 
       const script = document.createElement("script");
       script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -78,10 +82,13 @@ const Player = ({ accessToken }: { accessToken: string }) => {
           setProgress(state.position);
 
           const currentTrack = state.track_window.current_track;
-          if (currentTrack && currentTrack.album && currentTrack.album.images.length > 0) {
+          if (currentTrack && currentTrack.id !== currentTrackId) {
+            console.log("Current track info:", currentTrack);
             setAlbumImage(currentTrack.album.images[0].url);
             setTrackName(currentTrack.name);
             setArtistName(currentTrack.artists.map((artist: any) => artist.name).join(", "));
+            setCurrentTrackId(currentTrack.id); // 현재 트랙 ID 업데이트
+            fetchLyrics(currentTrack.name, currentTrack.artists.map((artist: any) => artist.name).join(", "));
           }
 
           player.getCurrentState().then(state => { 
@@ -134,6 +141,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
   const handlePlay = () => {
     if (accessToken && trackId && deviceId) {
+      console.log("Playing track with ID:", trackId);
       spotifyApi.transferMyPlayback([deviceId]).then(() => {
         spotifyApi
           .play({ device_id: deviceId, uris: [`spotify:track:${trackId}`] })
@@ -154,6 +162,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
   const handlePause = () => {
     if (player) {
+      console.log("Pausing track");
       player.pause().then(() => {
         setIsPlaying(false);
       });
@@ -162,6 +171,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
   const handleResume = () => {
     if (player) {
+      console.log("Resuming track");
       player.resume().then(() => {
         setIsPlaying(true);
       });
@@ -169,11 +179,30 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   };
 
   const handleTrackSelect = (selectedTrackId: string) => {
+    console.log("Selected track ID:", selectedTrackId);
     setTrackId(selectedTrackId);
   };
 
   const toggleFullscreen = () => {
+    console.log("Toggling fullscreen mode");
     setIsFullscreen(!isFullscreen);
+  };
+
+  const fetchLyrics = async (trackName: string, artistName: string) => {
+    console.log("Fetching lyrics for:", trackName, artistName);
+    try {
+      const response = await axios.get('http://localhost:5000/lyrics', {
+        params: {
+          track: trackName,
+          artist: artistName,
+        },
+      });
+      console.log("Lyrics response:", response.data);
+      setLyrics(response.data.lyrics_body || "가사를 찾을 수 없습니다.");
+    } catch (error) {
+      console.error("Error fetching lyrics", error);
+      setLyrics("가사를 찾을 수 없습니다.");
+    }
   };
 
   return (
@@ -233,9 +262,8 @@ const Player = ({ accessToken }: { accessToken: string }) => {
               </div>
             </div>
             <div className={styles.rightContent}>
-              {/* 가사 표시 부분 */}
               <h2>가사</h2>
-              <p>가사 내용이 여기에 표시됩니다.</p>
+              <pre className={styles.lyrics}>{lyrics}</pre>
             </div>
           </div>
         )}

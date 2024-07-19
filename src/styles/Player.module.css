@@ -117,3 +117,8 @@
     width: 500px;
   }
   
+  .lyrics {
+    white-space: pre-wrap;
+    text-align: left;
+  }
+  
