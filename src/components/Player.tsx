@@ -1,5 +1,3 @@
-// src/components/Player.tsx
-
 import { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import Search from "./Search";
@@ -14,6 +12,17 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
+  const [albumImage, setAlbumImage] = useState<string>("");
+  const [trackName, setTrackName] = useState<string>("");
+  const [artistName, setArtistName] = useState<string>("");
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
 
   useEffect(() => {
     if (accessToken) {
@@ -25,7 +34,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
       document.body.appendChild(script);
 
-      window.onSpotifyWebPlaybackSDKReady = () => {
+      const onSpotifyWebPlaybackSDKReady = () => {
         const player = new Spotify.Player({
           name: "Web Playback SDK",
           getOAuthToken: (cb) => {
@@ -68,6 +77,13 @@ const Player = ({ accessToken }: { accessToken: string }) => {
           setDuration(state.duration);
           setProgress(state.position);
 
+          const currentTrack = state.track_window.current_track;
+          if (currentTrack && currentTrack.album && currentTrack.album.images.length > 0) {
+            setAlbumImage(currentTrack.album.images[0].url);
+            setTrackName(currentTrack.name);
+            setArtistName(currentTrack.artists.map((artist: any) => artist.name).join(", "));
+          }
+
           player.getCurrentState().then(state => { 
             if (!state) {
               console.error('User is not playing music through the Web Playback SDK');
@@ -78,6 +94,14 @@ const Player = ({ accessToken }: { accessToken: string }) => {
         player.connect();
         setPlayer(player);
       };
+
+      window.onSpotifyWebPlaybackSDKReady = onSpotifyWebPlaybackSDKReady;
+
+      return () => {
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
+      };
     }
   }, [accessToken]);
 
@@ -86,6 +110,27 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       handlePlay();
     }
   }, [trackId, deviceId, accessToken]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        player.getCurrentState().then(state => {
+          if (!state) return;
+          setProgress(state.position);
+          setDuration(state.duration);
+        });
+      }, 1000);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isPlaying, player]);
 
   const handlePlay = () => {
     if (accessToken && trackId && deviceId) {
@@ -127,20 +172,25 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     setTrackId(selectedTrackId);
   };
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   return (
     <div className={styles.playerContainer}>
       <Search accessToken={accessToken} onTrackSelect={handleTrackSelect} />
-      <div className={`${styles.playbackBar} ${isPlaying ? styles.show : ''}`}>
+      <div className={`${styles.playbackBar} ${isFullscreen ? styles.fullscreen : ''}`}>
         <div className={styles.controls}>
           {trackId ? (
             <>
+              <img src={albumImage} alt="Album cover" className={styles.albumImage} />
               {isPlaying ? (
                 <button onClick={handlePause}>Pause</button>
               ) : (
                 <button onClick={handleResume}>Play</button>
               )}
               <div className={styles.progress}>
-                <span>{Math.floor(progress / 1000)} / {Math.floor(duration / 1000)}</span>
+                <span>{formatTime(progress)} / {formatTime(duration)}</span>
                 <input
                   type="range"
                   min="0"
@@ -157,7 +207,38 @@ const Player = ({ accessToken }: { accessToken: string }) => {
           ) : (
             <div>정보가 없습니다</div>
           )}
+          <button onClick={toggleFullscreen} className={styles.fullscreenToggle}>
+            ▲
+          </button>
         </div>
+        {isFullscreen && (
+          <div className={styles.fullscreenContent}>
+            <div className={styles.leftContent}>
+              <img src={albumImage} alt="Album cover" className={styles.fullscreenAlbumImage} />
+              <h2>{trackName}</h2>
+              <h3>{artistName}</h3>
+              <div className={styles.fullscreenProgress}>
+                <span>{formatTime(progress)} / {formatTime(duration)}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max={duration}
+                  value={progress}
+                  onChange={(e) => {
+                    const newProgress = Number(e.target.value);
+                    setProgress(newProgress);
+                    player.seek(newProgress);
+                  }}
+                />
+              </div>
+            </div>
+            <div className={styles.rightContent}>
+              {/* 가사 표시 부분 */}
+              <h2>가사</h2>
+              <p>가사 내용이 여기에 표시됩니다.</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

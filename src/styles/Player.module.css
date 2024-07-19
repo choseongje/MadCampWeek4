@@ -49,3 +49,71 @@
     width: 300px;
   }
   
+  .albumImage {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    border-radius: 5px;
+  }
+  
+  .fullscreenToggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .fullscreen {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .fullscreenContent {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .leftContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .rightContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+  }
+  
+  .fullscreenAlbumImage {
+    width: 300px;
+    height: 300px;
+    margin-bottom: 20px;
+  }
+  
+  .fullscreenProgress {
+    display: flex;
+    align-items: center;
+  }
+  
+  .fullscreenProgress input[type="range"] {
+    margin-left: 10px;
+    width: 500px;
+  }
+  
