@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import Search from "./Search";
+import styles from "../styles/Player.module.css"; // 스타일 파일 임포트
 
 const spotifyApi = new SpotifyWebApi();
 
@@ -10,6 +11,9 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [trackId, setTrackId] = useState<string>("");
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [player, setPlayer] = useState<any>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
 
   useEffect(() => {
     if (accessToken) {
@@ -55,6 +59,22 @@ const Player = ({ accessToken }: { accessToken: string }) => {
           console.error("Failed to perform playback", message);
         });
 
+        player.addListener('player_state_changed', (state) => {
+          if (!state) {
+            return;
+          }
+
+          setIsPlaying(!state.paused);
+          setDuration(state.duration);
+          setProgress(state.position);
+
+          player.getCurrentState().then(state => { 
+            if (!state) {
+              console.error('User is not playing music through the Web Playback SDK');
+            }
+          });
+        });
+
         player.connect();
         setPlayer(player);
       };
@@ -75,6 +95,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
           .then(
             () => {
               console.log("Track is playing");
+              setIsPlaying(true);
             },
             (err) => {
               console.error("Error playing track", err);
@@ -86,21 +107,57 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     }
   };
 
+  const handlePause = () => {
+    if (player) {
+      player.pause().then(() => {
+        setIsPlaying(false);
+      });
+    }
+  };
+
+  const handleResume = () => {
+    if (player) {
+      player.resume().then(() => {
+        setIsPlaying(true);
+      });
+    }
+  };
+
   const handleTrackSelect = (selectedTrackId: string) => {
     setTrackId(selectedTrackId);
   };
 
   return (
-    <div>
+    <div className={styles.playerContainer}>
       <Search accessToken={accessToken} onTrackSelect={handleTrackSelect} />
-      <div>
-        <input
-          type="text"
-          placeholder="Enter Spotify Track ID"
-          value={trackId}
-          onChange={(e) => setTrackId(e.target.value)}
-        />
-        <button onClick={handlePlay}>Play</button>
+      <div className={`${styles.playbackBar} ${isPlaying ? styles.show : ''}`}>
+        <div className={styles.controls}>
+          {trackId ? (
+            <>
+              {isPlaying ? (
+                <button onClick={handlePause}>Pause</button>
+              ) : (
+                <button onClick={handleResume}>Play</button>
+              )}
+              <div className={styles.progress}>
+                <span>{Math.floor(progress / 1000)} / {Math.floor(duration / 1000)}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max={duration}
+                  value={progress}
+                  onChange={(e) => {
+                    const newProgress = Number(e.target.value);
+                    setProgress(newProgress);
+                    player.seek(newProgress);
+                  }}
+                />
+              </div>
+            </>
+          ) : (
+            <div>정보가 없습니다</div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,51 @@
+/* src/styles/Player.module.css */
+
+.playerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .playbackBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: bottom 0.3s ease-in-out;
+  }
+  
+  .controls {
+    display: flex;
+    align-items: center;
+  }
+  
+  .controls button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    background-color: #1db954;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .controls button:hover {
+    background-color: #1ed760;
+  }
+  
+  .progress {
+    display: flex;
+    align-items: center;
+  }
+  
+  .progress input[type="range"] {
+    margin-left: 10px;
+    width: 300px;
+  }
+  

@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import Login from "../components/Login";
 import Player from "../components/Player";
-import Visualizer from "../components/Visualizer";
 
 const Home = () => {
   const searchParams = useSearchParams();
@@ -31,10 +30,7 @@ const Home = () => {
       {!accessToken ? (
         <Login />
       ) : (
-        <>
-          <Player accessToken={accessToken} />
-          <Visualizer />
-        </>
+        <Player accessToken={accessToken} />
       )}
     </div>
   );

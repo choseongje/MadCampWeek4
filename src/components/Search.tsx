@@ -29,6 +29,12 @@ const Search = ({ accessToken, onTrackSelect }: SearchProps) => {
     );
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <div className={styles.searchContainer}>
       <input
@@ -36,6 +42,7 @@ const Search = ({ accessToken, onTrackSelect }: SearchProps) => {
         placeholder="Search for a song"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
       <button onClick={handleSearch}>Search</button>
       <div className={styles.resultsContainer}>
