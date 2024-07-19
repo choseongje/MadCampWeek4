@@ -1,4 +1,19 @@
+/* src/styles/Home.module.css */
 .container {
   text-align: center;
   margin-top: 50px;
+}
+
+.fileInput {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 50px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.fileInput:hover {
+  background-color: #f0f0f0;
+  color: black;
 }
