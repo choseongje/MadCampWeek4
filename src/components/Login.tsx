@@ -11,7 +11,12 @@ const Login = () => {
       )}&redirect_uri=${encodeURIComponent(redirectUri)}`;
     };
   
-    return <button onClick={handleLogin}>Login with Spotify</button>;
+    return (
+      <div>
+        <h2>Please login to continue</h2>
+        <button onClick={handleLogin}>Login with Spotify</button>
+      </div>
+    );
   };
   
   export default Login;

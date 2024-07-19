@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
+import Search from "./Search";
 
 const spotifyApi = new SpotifyWebApi();
 
@@ -60,6 +61,12 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     }
   }, [accessToken]);
 
+  useEffect(() => {
+    if (accessToken && trackId && deviceId) {
+      handlePlay();
+    }
+  }, [trackId, deviceId, accessToken]);
+
   const handlePlay = () => {
     if (accessToken && trackId && deviceId) {
       spotifyApi.transferMyPlayback([deviceId]).then(() => {
@@ -79,16 +86,23 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     }
   };
 
+  const handleTrackSelect = (selectedTrackId: string) => {
+    setTrackId(selectedTrackId);
+  };
+
   return (
-    <>
-      <input
-        type="text"
-        placeholder="Enter Spotify Track ID"
-        value={trackId}
-        onChange={(e) => setTrackId(e.target.value)}
-      />
-      <button onClick={handlePlay}>Play</button>
-    </>
+    <div>
+      <Search accessToken={accessToken} onTrackSelect={handleTrackSelect} />
+      <div>
+        <input
+          type="text"
+          placeholder="Enter Spotify Track ID"
+          value={trackId}
+          onChange={(e) => setTrackId(e.target.value)}
+        />
+        <button onClick={handlePlay}>Play</button>
+      </div>
+    </div>
   );
 };
 
