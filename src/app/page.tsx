@@ -1,10 +1,11 @@
-// src/app/page.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Visualizer from "../components/Visualizer";
+import BasicVisualizer from "../components/BasicVisualizer";
+import CircularVisualizer from "../components/CircularVisualizer";
+import WaveformVisualizer from "../components/WaveformVisualizer";
+import RadialVisualizer from "../components/RadialVisualizer";
 import Login from "../components/Login";
 import Player from "../components/Player";
 import styles from "../styles/Home.module.css";
@@ -13,6 +14,10 @@ export default function Home() {
   const searchParams = useSearchParams();
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [visualizerType, setVisualizerType] = useState<
+    "basic" | "circular" | "waveform" | "radial"
+  >("basic");
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const token = searchParams.get("access_token");
@@ -29,7 +34,20 @@ export default function Home() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setAudioFile(event.target.files[0]);
+      setIsPlaying(false); // 파일을 선택하면 재생 상태를 멈춤
     }
+  };
+
+  const handleVisualizerChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setVisualizerType(
+      event.target.value as "basic" | "circular" | "waveform" | "radial"
+    );
+  };
+
+  const handlePlayPause = () => {
+    setIsPlaying((prev) => !prev);
   };
 
   return (
@@ -46,7 +64,44 @@ export default function Home() {
             onChange={handleFileChange}
             className={styles.fileInput}
           />
-          {audioFile && <Visualizer audioFile={audioFile} />}
+          <select
+            onChange={handleVisualizerChange}
+            value={visualizerType}
+            className={styles.select}
+          >
+            <option value="basic">Basic Visualizer</option>
+            <option value="circular">Circular Visualizer</option>
+            <option value="waveform">Waveform Visualizer</option>
+            <option value="radial">Radial Visualizer</option>
+          </select>
+          {audioFile && visualizerType === "basic" && (
+            <BasicVisualizer
+              audioFile={audioFile}
+              isPlaying={isPlaying}
+              onPlayPause={handlePlayPause}
+            />
+          )}
+          {audioFile && visualizerType === "circular" && (
+            <CircularVisualizer
+              audioFile={audioFile}
+              isPlaying={isPlaying}
+              onPlayPause={handlePlayPause}
+            />
+          )}
+          {audioFile && visualizerType === "waveform" && (
+            <WaveformVisualizer
+              audioFile={audioFile}
+              isPlaying={isPlaying}
+              onPlayPause={handlePlayPause}
+            />
+          )}
+          {audioFile && visualizerType === "radial" && (
+            <RadialVisualizer
+              audioFile={audioFile}
+              isPlaying={isPlaying}
+              onPlayPause={handlePlayPause}
+            />
+          )}
         </div>
       )}
     </div>

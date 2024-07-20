@@ -17,3 +17,9 @@
   background-color: #f0f0f0;
   color: black;
 }
+
+.select {
+  margin: 20px;
+  padding: 10px;
+  font-size: 16px;
+}
