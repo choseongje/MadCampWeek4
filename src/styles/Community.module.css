@@ -1,0 +1,30 @@
+.container {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .header {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  .tabBar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .tabButton {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #1db954;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .tabButton:hover {
+    background-color: #1ed760;
+  }
+  
