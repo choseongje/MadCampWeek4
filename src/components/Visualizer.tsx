@@ -64,29 +64,27 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
 
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          const barWidth = canvas.width / bufferLength;
+          const barWidth = (canvas.width / bufferLength) * 2.5;
           let barHeight;
           let x = 0;
 
           for (let i = 0; i < bufferLength; i++) {
             barHeight = dataArray[i];
 
-            // 주파수 대역에 따라 색상 변경 (예: 저주파수, 중주파수, 고주파수)
-            if (i < bufferLength / 3) {
-              ctx.fillStyle = `rgb(${barHeight + 100}, 50, 50)`; // 저주파수
-            } else if (i < (2 * bufferLength) / 3) {
-              ctx.fillStyle = `rgb(50, ${barHeight + 100}, 50)`; // 중주파수
-            } else {
-              ctx.fillStyle = `rgb(50, 50, ${barHeight + 100})`; // 고주파수
-            }
+            // 이전 JavaScript 코드와 유사한 색상 적용
+            const red = barHeight + 25 * (i / bufferLength);
+            const green = 250 * (i / bufferLength);
+            const blue = 50;
 
+            ctx.fillStyle = `rgb(${red},${green},${blue})`;
             ctx.fillRect(
               x,
-              canvas.height - barHeight / 2,
+              canvas.height - (barHeight / 255) * canvas.height,
               barWidth,
-              barHeight / 2
+              (barHeight / 255) * canvas.height
             );
-            x += barWidth;
+
+            x += barWidth + 1;
           }
         };
 
