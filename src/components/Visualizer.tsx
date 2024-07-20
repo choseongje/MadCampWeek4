@@ -64,7 +64,7 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
 
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          const barWidth = (canvas.width / bufferLength) * 2.5;
+          const barWidth = canvas.width / bufferLength;
           let barHeight;
           let x = 0;
 
@@ -84,7 +84,7 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
               (barHeight / 255) * canvas.height
             );
 
-            x += barWidth + 1;
+            x += barWidth;
           }
         };
 
