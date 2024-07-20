@@ -41,3 +41,9 @@
 .tabButton:hover {
   background-color: #1ed760;
 }
+
+.select {
+  margin: 20px;
+  padding: 10px;
+  font-size: 16px;
+}

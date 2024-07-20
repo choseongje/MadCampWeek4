@@ -25,7 +25,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   useEffect(() => {
@@ -75,7 +75,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
               console.error("Failed to perform playback", message);
             });
 
-            newPlayer.addListener('player_state_changed', (state) => {
+            newPlayer.addListener("player_state_changed", (state) => {
               if (!state) {
                 return;
               }
@@ -89,7 +89,11 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                 console.log("Current track info:", currentTrack);
                 setAlbumImage(currentTrack.album.images[0].url);
                 setTrackName(currentTrack.name);
-                setArtistName(currentTrack.artists.map((artist: any) => artist.name).join(", "));
+                setArtistName(
+                  currentTrack.artists
+                    .map((artist: any) => artist.name)
+                    .join(", ")
+                );
                 setCurrentTrackId(currentTrack.id);
               }
             });
@@ -112,7 +116,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     let interval: NodeJS.Timeout | null = null;
     if (isPlaying && player) {
       interval = setInterval(() => {
-        player.getCurrentState().then(state => {
+        player.getCurrentState().then((state) => {
           if (!state) return;
           setProgress(state.position);
           setDuration(state.duration);
@@ -131,7 +135,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
   useEffect(() => {
     if (currentTrackId) {
-      fetchLyrics(trackName, artistName, 'ko'); // 번역할 언어 설정
+      fetchLyrics(trackName, artistName, "ko"); // 번역할 언어 설정
     }
   }, [currentTrackId]);
 
@@ -184,10 +188,14 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     setIsFullscreen(!isFullscreen);
   };
 
-  const fetchLyrics = async (trackName: string, artistName: string, targetLang: string) => {
+  const fetchLyrics = async (
+    trackName: string,
+    artistName: string,
+    targetLang: string
+  ) => {
     console.log("Fetching lyrics for:", trackName, artistName);
     try {
-      const response = await axios.get('http://172.10.7.88:80/lyrics', {
+      const response = await axios.get("http://172.10.7.88:80/lyrics", {
         params: {
           track: trackName,
           artist: artistName,
@@ -196,7 +204,9 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       });
       console.log("Lyrics response:", response.data);
       setLyrics(response.data.original || "가사를 찾을 수 없습니다.");
-      setTranslatedLyrics(response.data.translated || "번역된 가사를 찾을 수 없습니다.");
+      setTranslatedLyrics(
+        response.data.translated || "번역된 가사를 찾을 수 없습니다."
+      );
     } catch (error) {
       console.error("Error fetching lyrics", error);
       setLyrics("가사를 찾을 수 없습니다.");
@@ -207,18 +217,28 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   return (
     <div className={styles.playerContainer}>
       <Search accessToken={accessToken} onTrackSelect={handleTrackSelect} />
-      <div className={`${styles.playbackBar} ${isFullscreen ? styles.fullscreen : ''}`}>
+      <div
+        className={`${styles.playbackBar} ${
+          isFullscreen ? styles.fullscreen : ""
+        }`}
+      >
         <div className={styles.controls}>
           {trackId ? (
             <>
-              <img src={albumImage} alt="Album cover" className={styles.albumImage} />
+              <img
+                src={albumImage}
+                alt="Album cover"
+                className={styles.albumImage}
+              />
               {isPlaying ? (
                 <button onClick={handlePause}>Pause</button>
               ) : (
                 <button onClick={handleResume}>Play</button>
               )}
               <div className={styles.progress}>
-                <span>{formatTime(progress)} / {formatTime(duration)}</span>
+                <span>
+                  {formatTime(progress)} / {formatTime(duration)}
+                </span>
                 <input
                   type="range"
                   min="0"
@@ -235,18 +255,27 @@ const Player = ({ accessToken }: { accessToken: string }) => {
           ) : (
             <div>정보가 없습니다</div>
           )}
-          <button onClick={toggleFullscreen} className={styles.fullscreenToggle}>
+          <button
+            onClick={toggleFullscreen}
+            className={styles.fullscreenToggle}
+          >
             ▲
           </button>
         </div>
         {isFullscreen && (
           <div className={styles.fullscreenContent}>
             <div className={styles.leftContent}>
-              <img src={albumImage} alt="Album cover" className={styles.fullscreenAlbumImage} />
+              <img
+                src={albumImage}
+                alt="Album cover"
+                className={styles.fullscreenAlbumImage}
+              />
               <h2>{trackName}</h2>
               <h3>{artistName}</h3>
               <div className={styles.fullscreenProgress}>
-                <span>{formatTime(progress)} / {formatTime(duration)}</span>
+                <span>
+                  {formatTime(progress)} / {formatTime(duration)}
+                </span>
                 <input
                   type="range"
                   min="0"

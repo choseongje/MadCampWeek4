@@ -1,14 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "../styles/Visualizer.module.css";
 
-const Visualizer = ({ audioFile }: { audioFile: File }) => {
+const WaveformVisualizer = ({
+  audioFile,
+  isPlaying,
+  onPlayPause,
+}: {
+  audioFile: File;
+  isPlaying: boolean;
+  onPlayPause: () => void;
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [frequencyScale, setFrequencyScale] = useState<number[]>([]);
 
   useEffect(() => {
     if (audioContextRef.current) {
@@ -21,22 +27,9 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
     const audioContext = new (window.AudioContext ||
       (window as any).webkitAudioContext)();
     const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 256;
-    const bufferLength = analyser.frequencyBinCount;
+    analyser.fftSize = 2048;
+    const bufferLength = analyser.fftSize;
     const dataArray = new Uint8Array(bufferLength);
-
-    const sampleRate = audioContext.sampleRate;
-    const nyquist = sampleRate / 2;
-
-    // 로그 스케일 주파수 범위 계산
-    const minFreq = 20; // 최소 주파수
-    const maxFreq = nyquist; // 최대 주파수
-    const frequencyScale = Array.from(
-      { length: bufferLength },
-      (_, i) => minFreq * Math.pow(maxFreq / minFreq, i / bufferLength)
-    );
-
-    setFrequencyScale(frequencyScale);
 
     audioContextRef.current = audioContext;
     analyserRef.current = analyser;
@@ -60,32 +53,33 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
           if (!audioContextRef.current) return;
           requestAnimationFrame(drawVisualizer);
 
-          analyser.getByteFrequencyData(dataArray);
+          analyser.getByteTimeDomainData(dataArray);
 
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          const barWidth = canvas.width / bufferLength;
-          let barHeight;
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "rgb(0, 255, 0)";
+
+          ctx.beginPath();
+
+          const sliceWidth = (canvas.width * 1.0) / bufferLength;
           let x = 0;
 
           for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i];
+            const v = dataArray[i] / 128.0;
+            const y = (v * canvas.height) / 2;
 
-            // 이전 JavaScript 코드와 유사한 색상 적용
-            const red = barHeight + 25 * (i / bufferLength);
-            const green = 250 * (i / bufferLength);
-            const blue = 50;
+            if (i === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
 
-            ctx.fillStyle = `rgb(${red},${green},${blue})`;
-            ctx.fillRect(
-              x,
-              canvas.height - (barHeight / 255) * canvas.height,
-              barWidth,
-              (barHeight / 255) * canvas.height
-            );
-
-            x += barWidth;
+            x += sliceWidth;
           }
+
+          ctx.lineTo(canvas.width, canvas.height / 2);
+          ctx.stroke();
         };
 
         drawVisualizer();
@@ -99,21 +93,20 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
     };
   }, [audioFile]);
 
-  const handlePlayPause = () => {
+  useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.pause();
-      } else {
         audioRef.current.play();
+      } else {
+        audioRef.current.pause();
       }
-      setIsPlaying(!isPlaying);
     }
-  };
+  }, [isPlaying]);
 
   return (
     <div className={styles.visualizerContainer}>
       <div className={styles.controls}>
-        <button className={styles.button} onClick={handlePlayPause}>
+        <button className={styles.button} onClick={onPlayPause}>
           {isPlaying ? "Pause" : "Play"}
         </button>
       </div>
@@ -127,4 +120,4 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
   );
 };
 
-export default Visualizer;
+export default WaveformVisualizer;

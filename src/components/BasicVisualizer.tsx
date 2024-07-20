@@ -1,14 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "../styles/Visualizer.module.css";
 
-const Visualizer = ({ audioFile }: { audioFile: File }) => {
+const BasicVisualizer = ({
+  audioFile,
+  isPlaying,
+  onPlayPause,
+}: {
+  audioFile: File;
+  isPlaying: boolean;
+  onPlayPause: () => void;
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [frequencyScale, setFrequencyScale] = useState<number[]>([]);
 
   useEffect(() => {
     if (audioContextRef.current) {
@@ -35,8 +41,6 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
       { length: bufferLength },
       (_, i) => minFreq * Math.pow(maxFreq / minFreq, i / bufferLength)
     );
-
-    setFrequencyScale(frequencyScale);
 
     audioContextRef.current = audioContext;
     analyserRef.current = analyser;
@@ -71,7 +75,7 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
           for (let i = 0; i < bufferLength; i++) {
             barHeight = dataArray[i];
 
-            // 이전 JavaScript 코드와 유사한 색상 적용
+            // 선명한 색상 팔레트 적용
             const red = barHeight + 25 * (i / bufferLength);
             const green = 250 * (i / bufferLength);
             const blue = 50;
@@ -99,21 +103,20 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
     };
   }, [audioFile]);
 
-  const handlePlayPause = () => {
+  useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.pause();
-      } else {
         audioRef.current.play();
+      } else {
+        audioRef.current.pause();
       }
-      setIsPlaying(!isPlaying);
     }
-  };
+  }, [isPlaying]);
 
   return (
     <div className={styles.visualizerContainer}>
       <div className={styles.controls}>
-        <button className={styles.button} onClick={handlePlayPause}>
+        <button className={styles.button} onClick={onPlayPause}>
           {isPlaying ? "Pause" : "Play"}
         </button>
       </div>
@@ -127,4 +130,4 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
   );
 };
 
-export default Visualizer;
+export default BasicVisualizer;

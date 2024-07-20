@@ -1,14 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "../styles/Visualizer.module.css";
 
-const Visualizer = ({ audioFile }: { audioFile: File }) => {
+const CircularVisualizer = ({
+  audioFile,
+  isPlaying,
+  onPlayPause,
+}: {
+  audioFile: File;
+  isPlaying: boolean;
+  onPlayPause: () => void;
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [frequencyScale, setFrequencyScale] = useState<number[]>([]);
 
   useEffect(() => {
     if (audioContextRef.current) {
@@ -36,8 +42,6 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
       (_, i) => minFreq * Math.pow(maxFreq / minFreq, i / bufferLength)
     );
 
-    setFrequencyScale(frequencyScale);
-
     audioContextRef.current = audioContext;
     analyserRef.current = analyser;
 
@@ -62,29 +66,39 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
 
           analyser.getByteFrequencyData(dataArray);
 
+          // 배경색 설정
           ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#000000"; // 검정색 배경
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-          const barWidth = canvas.width / bufferLength;
-          let barHeight;
-          let x = 0;
+          const radius = Math.min(canvas.width, canvas.height) / 4;
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
 
-          for (let i = 0; i < bufferLength; i++) {
-            barHeight = dataArray[i];
+          const startIdx = Math.floor(bufferLength * 0.05); // 맨 앞 5% 잘라냄
+          const endIdx = Math.floor(bufferLength * 0.85); // 맨 뒤 15% 잘라냄
+          const visualLength = endIdx - startIdx; // 시각화할 데이터 길이
 
-            // 이전 JavaScript 코드와 유사한 색상 적용
-            const red = barHeight + 25 * (i / bufferLength);
-            const green = 250 * (i / bufferLength);
+          for (let i = startIdx; i < endIdx; i++) {
+            const angle = ((i - startIdx) / visualLength) * Math.PI * 2;
+            const barHeight = dataArray[i] / 2;
+
+            const x1 = centerX + Math.cos(angle) * radius;
+            const y1 = centerY + Math.sin(angle) * radius;
+            const x2 = centerX + Math.cos(angle) * (radius + barHeight);
+            const y2 = centerY + Math.sin(angle) * (radius + barHeight);
+
+            const red =
+              (barHeight + 25 * ((i - startIdx) / visualLength)) % 256;
+            const green = (250 * ((i - startIdx) / visualLength)) % 256;
             const blue = 50;
 
-            ctx.fillStyle = `rgb(${red},${green},${blue})`;
-            ctx.fillRect(
-              x,
-              canvas.height - (barHeight / 255) * canvas.height,
-              barWidth,
-              (barHeight / 255) * canvas.height
-            );
-
-            x += barWidth;
+            ctx.strokeStyle = `rgb(${red},${green},${blue})`;
+            ctx.lineWidth = 8; // 막대의 두께
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
           }
         };
 
@@ -99,21 +113,20 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
     };
   }, [audioFile]);
 
-  const handlePlayPause = () => {
+  useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.pause();
-      } else {
         audioRef.current.play();
+      } else {
+        audioRef.current.pause();
       }
-      setIsPlaying(!isPlaying);
     }
-  };
+  }, [isPlaying]);
 
   return (
     <div className={styles.visualizerContainer}>
       <div className={styles.controls}>
-        <button className={styles.button} onClick={handlePlayPause}>
+        <button className={styles.button} onClick={onPlayPause}>
           {isPlaying ? "Pause" : "Play"}
         </button>
       </div>
@@ -121,10 +134,10 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
         ref={canvasRef}
         className={styles.canvas}
         width="600"
-        height="300"
+        height="600"
       />
     </div>
   );
 };
 
-export default Visualizer;
+export default CircularVisualizer;
