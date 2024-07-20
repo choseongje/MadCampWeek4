@@ -119,13 +119,6 @@ const Visualizer = ({ audioFile }: { audioFile: File }) => {
           {isPlaying ? "Pause" : "Play"}
         </button>
       </div>
-      <div>
-        {frequencyScale.map((freq, index) => (
-          <div key={index}>
-            Bin {index}: {freq.toFixed(2)} Hz
-          </div>
-        ))}
-      </div>
       <canvas
         ref={canvasRef}
         className={styles.canvas}
