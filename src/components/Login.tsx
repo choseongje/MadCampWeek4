@@ -36,6 +36,12 @@ const Login = () => {
     }
   };
 
+  const checkTokenExpiry = () => {
+    const expiresIn = localStorage.getItem("spotify_token_expires_in");
+    if (!expiresIn) return false;
+    return new Date().getTime() < Number(expiresIn);
+  };
+
   useEffect(() => {
     const hash = window.location.hash
       .substring(1)
@@ -48,8 +54,19 @@ const Login = () => {
         return acc;
       }, {} as Record<string, string>);
 
-    if (hash.access_token) {
+    if (hash.access_token && hash.expires_in) {
+      const expiresIn = new Date().getTime() + Number(hash.expires_in) * 1000;
+      localStorage.setItem("spotify_access_token", hash.access_token);
+      localStorage.setItem("spotify_token_expires_in", expiresIn.toString());
       fetchUserProfile(hash.access_token);
+    } else {
+      const storedToken = localStorage.getItem("spotify_access_token");
+      if (storedToken && checkTokenExpiry()) {
+        fetchUserProfile(storedToken);
+      } else {
+        localStorage.removeItem("spotify_access_token");
+        localStorage.removeItem("spotify_token_expires_in");
+      }
     }
   }, []);
 

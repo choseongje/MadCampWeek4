@@ -1,5 +1,3 @@
-// src/app/page.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -18,11 +16,23 @@ export default function Home() {
     const token = searchParams.get("access_token");
     if (token) {
       setAccessToken(token);
+      const expiresIn = new Date().getTime() + 3600 * 1000; // Assuming token is valid for 1 hour
+      localStorage.setItem("spotify_access_token", token);
+      localStorage.setItem("spotify_token_expires_in", expiresIn.toString());
 
       // Remove the token from the URL after setting it
       const url = new URL(window.location.href);
       url.searchParams.delete("access_token");
       window.history.replaceState({}, document.title, url.toString());
+    } else {
+      const storedToken = localStorage.getItem("spotify_access_token");
+      const expiresIn = localStorage.getItem("spotify_token_expires_in");
+      if (storedToken && expiresIn && new Date().getTime() < Number(expiresIn)) {
+        setAccessToken(storedToken);
+      } else {
+        localStorage.removeItem("spotify_access_token");
+        localStorage.removeItem("spotify_token_expires_in");
+      }
     }
   }, [searchParams]);
 
