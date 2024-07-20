@@ -1,10 +1,13 @@
 import { useEffect } from "react";
+import { useRouter } from "next/navigation"; // useRouter를 올바르게 가져옵니다
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
 
 const spotifyApi = new SpotifyWebApi();
 
 const Login = () => {
+  const router = useRouter(); // useRouter 훅을 사용합니다
+
   const handleLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
@@ -31,6 +34,7 @@ const Login = () => {
         product 
       });
       console.log("User profile saved:", response);
+      router.push("/player"); // 로그인 후 리디렉션합니다
     } catch (error) {
       console.error("Error fetching user profile", error);
     }

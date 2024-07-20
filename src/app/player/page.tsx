@@ -44,7 +44,7 @@ export default function PlayerPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.header}>Spotify Player</h1>
+      <h1 className={styles.header}>Spotify Visualizer</h1>
       {!accessToken ? (
         <Login />
       ) : (
