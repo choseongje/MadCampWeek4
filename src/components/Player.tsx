@@ -8,7 +8,7 @@ const spotifyApi = new SpotifyWebApi();
 
 const Player = ({ accessToken }: { accessToken: string }) => {
   const [trackId, setTrackId] = useState<string>("");
-  const [currentTrackId, setCurrentTrackId] = useState<string>(""); // 현재 트랙 ID 상태 추가
+  const [currentTrackId, setCurrentTrackId] = useState<string>("");
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [player, setPlayer] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -19,6 +19,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [artistName, setArtistName] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [lyrics, setLyrics] = useState<string>("");
+  const [translatedLyrics, setTranslatedLyrics] = useState<string>("");
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -32,83 +33,72 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       spotifyApi.setAccessToken(accessToken);
       console.log("Access token set:", accessToken);
 
-      const script = document.createElement("script");
-      script.src = "https://sdk.scdn.co/spotify-player.js";
-      script.async = true;
+      if (!window.onSpotifyWebPlaybackSDKReady) {
+        const script = document.createElement("script");
+        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.async = true;
 
-      document.body.appendChild(script);
+        document.body.appendChild(script);
 
-      const onSpotifyWebPlaybackSDKReady = () => {
-        const player = new Spotify.Player({
-          name: "Web Playback SDK",
-          getOAuthToken: (cb) => {
-            cb(accessToken);
-          },
-          volume: 0.5,
-        });
+        window.onSpotifyWebPlaybackSDKReady = () => {
+          if (!player) {
+            const newPlayer = new Spotify.Player({
+              name: "Web Playback SDK",
+              getOAuthToken: (cb) => {
+                cb(accessToken);
+              },
+              volume: 0.5,
+            });
 
-        player.addListener("ready", ({ device_id }) => {
-          console.log("Ready with Device ID", device_id);
-          setDeviceId(device_id);
-        });
+            newPlayer.addListener("ready", ({ device_id }) => {
+              console.log("Ready with Device ID", device_id);
+              setDeviceId(device_id);
+            });
 
-        player.addListener("not_ready", ({ device_id }) => {
-          console.log("Device ID has gone offline", device_id);
-        });
+            newPlayer.addListener("not_ready", ({ device_id }) => {
+              console.log("Device ID has gone offline", device_id);
+            });
 
-        player.addListener("initialization_error", ({ message }) => {
-          console.error("Failed to initialize", message);
-        });
+            newPlayer.addListener("initialization_error", ({ message }) => {
+              console.error("Failed to initialize", message);
+            });
 
-        player.addListener("authentication_error", ({ message }) => {
-          console.error("Failed to authenticate", message);
-        });
+            newPlayer.addListener("authentication_error", ({ message }) => {
+              console.error("Failed to authenticate", message);
+            });
 
-        player.addListener("account_error", ({ message }) => {
-          console.error("Failed to validate Spotify account", message);
-        });
+            newPlayer.addListener("account_error", ({ message }) => {
+              console.error("Failed to validate Spotify account", message);
+            });
 
-        player.addListener("playback_error", ({ message }) => {
-          console.error("Failed to perform playback", message);
-        });
+            newPlayer.addListener("playback_error", ({ message }) => {
+              console.error("Failed to perform playback", message);
+            });
 
-        player.addListener('player_state_changed', (state) => {
-          if (!state) {
-            return;
+            newPlayer.addListener('player_state_changed', (state) => {
+              if (!state) {
+                return;
+              }
+
+              setIsPlaying(!state.paused);
+              setDuration(state.duration);
+              setProgress(state.position);
+
+              const currentTrack = state.track_window.current_track;
+              if (currentTrack && currentTrack.id !== currentTrackId) {
+                console.log("Current track info:", currentTrack);
+                setAlbumImage(currentTrack.album.images[0].url);
+                setTrackName(currentTrack.name);
+                setArtistName(currentTrack.artists.map((artist: any) => artist.name).join(", "));
+                setCurrentTrackId(currentTrack.id);
+              }
+            });
+
+            newPlayer.connect();
+            setPlayer(newPlayer);
           }
-
-          setIsPlaying(!state.paused);
-          setDuration(state.duration);
-          setProgress(state.position);
-
-          const currentTrack = state.track_window.current_track;
-          if (currentTrack && currentTrack.id !== currentTrackId) {
-            console.log("Current track info:", currentTrack);
-            setAlbumImage(currentTrack.album.images[0].url);
-            setTrackName(currentTrack.name);
-            setArtistName(currentTrack.artists.map((artist: any) => artist.name).join(", "));
-            setCurrentTrackId(currentTrack.id); // 현재 트랙 ID 업데이트
-            fetchLyrics(currentTrack.name, currentTrack.artists.map((artist: any) => artist.name).join(", "));
-          }
-
-          player.getCurrentState().then(state => { 
-            if (!state) {
-              console.error('User is not playing music through the Web Playback SDK');
-            }
-          });
-        });
-
-        player.connect();
-        setPlayer(player);
-      };
-
-      window.onSpotifyWebPlaybackSDKReady = onSpotifyWebPlaybackSDKReady;
-
-      return () => {
-        if (document.body.contains(script)) {
-          document.body.removeChild(script);
-        }
-      };
+        };
+      }
     }
   }, [accessToken]);
 
@@ -120,7 +110,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    if (isPlaying) {
+    if (isPlaying && player) {
       interval = setInterval(() => {
         player.getCurrentState().then(state => {
           if (!state) return;
@@ -138,6 +128,12 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       }
     };
   }, [isPlaying, player]);
+
+  useEffect(() => {
+    if (currentTrackId) {
+      fetchLyrics(trackName, artistName, 'ko'); // 번역할 언어 설정
+    }
+  }, [currentTrackId]);
 
   const handlePlay = () => {
     if (accessToken && trackId && deviceId) {
@@ -188,20 +184,23 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     setIsFullscreen(!isFullscreen);
   };
 
-  const fetchLyrics = async (trackName: string, artistName: string) => {
+  const fetchLyrics = async (trackName: string, artistName: string, targetLang: string) => {
     console.log("Fetching lyrics for:", trackName, artistName);
     try {
       const response = await axios.get('http://localhost:5000/lyrics', {
         params: {
           track: trackName,
           artist: artistName,
+          targetLang,
         },
       });
       console.log("Lyrics response:", response.data);
-      setLyrics(response.data.lyrics_body || "가사를 찾을 수 없습니다.");
+      setLyrics(response.data.original || "가사를 찾을 수 없습니다.");
+      setTranslatedLyrics(response.data.translated || "번역된 가사를 찾을 수 없습니다.");
     } catch (error) {
       console.error("Error fetching lyrics", error);
       setLyrics("가사를 찾을 수 없습니다.");
+      setTranslatedLyrics("번역된 가사를 찾을 수 없습니다.");
     }
   };
 
@@ -264,6 +263,8 @@ const Player = ({ accessToken }: { accessToken: string }) => {
             <div className={styles.rightContent}>
               <h2>가사</h2>
               <pre className={styles.lyrics}>{lyrics}</pre>
+              <h2>번역된 가사</h2>
+              <pre className={styles.lyrics}>{translatedLyrics}</pre>
             </div>
           </div>
         )}
