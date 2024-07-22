@@ -20,6 +20,10 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [lyrics, setLyrics] = useState<string>("");
   const [translatedLyrics, setTranslatedLyrics] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<
+    "lyrics" | "translatedLyrics" | "queue"
+  >("lyrics");
+  const [queue, setQueue] = useState<any[]>([]);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -290,10 +294,63 @@ const Player = ({ accessToken }: { accessToken: string }) => {
               </div>
             </div>
             <div className={styles.rightContent}>
-              <h2>가사</h2>
-              <pre className={styles.lyrics}>{lyrics}</pre>
-              <h2>번역된 가사</h2>
-              <pre className={styles.lyrics}>{translatedLyrics}</pre>
+              <div className={styles.tabs}>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "lyrics" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("lyrics")}
+                >
+                  가사
+                </button>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "translatedLyrics" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("translatedLyrics")}
+                >
+                  번역된 가사
+                </button>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "queue" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("queue")}
+                >
+                  재생 대기 목록
+                </button>
+              </div>
+              {activeTab === "lyrics" && (
+                <pre className={styles.lyrics}>{lyrics}</pre>
+              )}
+              {activeTab === "translatedLyrics" && (
+                <pre className={styles.lyrics}>{translatedLyrics}</pre>
+              )}
+              {activeTab === "queue" && (
+                <div className={styles.queue}>
+                  {queue.length > 0 ? (
+                    queue.map((track, index) => (
+                      <div key={index} className={styles.queueItem}>
+                        <img
+                          src={track.album.images[0].url}
+                          alt="Album cover"
+                          className={styles.queueAlbumImage}
+                        />
+                        <div>
+                          <p>{track.name}</p>
+                          <p>
+                            {track.artists
+                              .map((artist: any) => artist.name)
+                              .join(", ")}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>재생 대기 목록이 비어 있습니다.</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
