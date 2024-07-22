@@ -73,6 +73,9 @@ export default function Home() {
         <Link href="/community" className={styles.tabButton}>
           커뮤니티
         </Link>
+        <Link href="/visualizer" className={styles.tabButton}>
+          비주얼라이저
+        </Link>
       </div>
     </div>
   );
