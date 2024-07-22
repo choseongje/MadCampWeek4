@@ -287,3 +287,19 @@
 .trackItem button:hover {
   background-color: #1ed760;
 }
+
+.createPlaylistButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #1db954;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.createPlaylistButton:hover {
+  background-color: #1ed760;
+}
