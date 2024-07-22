@@ -346,50 +346,54 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                   플레이리스트
                 </button>
               </div>
-              {activeTab === "lyrics" && (
-                <pre className={styles.lyrics}>{lyrics}</pre>
-              )}
-              {activeTab === "translatedLyrics" && (
-                <pre className={styles.lyrics}>{translatedLyrics}</pre>
-              )}
-              {activeTab === "queue" && (
-                <div className={styles.queue}>
-                  {queue.length > 0 ? (
-                    queue.map((track, index) => (
-                      <div
-                        key={index}
-                        className={styles.queueItem}
-                        onClick={() => handleQueueTrackPlay(track.id)}
-                      >
-                        <img
-                          src={track.album.images[0].url}
-                          alt="Album cover"
-                          className={styles.queueAlbumImage}
-                        />
-                        <div className={styles.queueDetails}>
-                          <p className={styles.queueTrackName}>{track.name}</p>
-                          <p className={styles.queueArtistName}>
-                            {track.artists
-                              .map((artist: any) => artist.name)
-                              .join(", ")}
-                          </p>
-                        </div>
-                        <button
-                          onClick={(e) => handleRemoveFromQueue(index, e)}
-                          className={styles.removeButton}
+              <div className={styles.scrollableContent}>
+                {activeTab === "lyrics" && (
+                  <pre className={styles.lyrics}>{lyrics}</pre>
+                )}
+                {activeTab === "translatedLyrics" && (
+                  <pre className={styles.lyrics}>{translatedLyrics}</pre>
+                )}
+                {activeTab === "queue" && (
+                  <div className={styles.queue}>
+                    {queue.length > 0 ? (
+                      queue.map((track, index) => (
+                        <div
+                          key={index}
+                          className={styles.queueItem}
+                          onClick={() => handleQueueTrackPlay(track.id)}
                         >
-                          Remove
-                        </button>
-                      </div>
-                    ))
-                  ) : (
-                    <p>재생 대기 목록이 비어 있습니다.</p>
-                  )}
-                </div>
-              )}
-              {activeTab === "playlist" && (
-                <Playlist accessToken={accessToken} onSetQueue={setQueue} />
-              )}
+                          <img
+                            src={track.album.images[0].url}
+                            alt="Album cover"
+                            className={styles.queueAlbumImage}
+                          />
+                          <div className={styles.queueDetails}>
+                            <p className={styles.queueTrackName}>
+                              {track.name}
+                            </p>
+                            <p className={styles.queueArtistName}>
+                              {track.artists
+                                .map((artist: any) => artist.name)
+                                .join(", ")}
+                            </p>
+                          </div>
+                          <button
+                            onClick={(e) => handleRemoveFromQueue(index, e)}
+                            className={styles.removeButton}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <p>재생 대기 목록이 비어 있습니다.</p>
+                    )}
+                  </div>
+                )}
+                {activeTab === "playlist" && (
+                  <Playlist accessToken={accessToken} onSetQueue={setQueue} />
+                )}
+              </div>
             </div>
           </div>
         )}

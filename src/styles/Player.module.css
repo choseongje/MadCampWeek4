@@ -83,6 +83,7 @@
   height: 100%;
   justify-content: space-between;
   padding: 20px;
+  overflow-y: hidden;
 }
 
 .leftContent {
@@ -99,8 +100,12 @@
   flex-direction: column;
   align-items: center;
   color: white;
-  overflow-y: auto; /* 스크롤 가능하게 설정 */
   height: 100%; /* 부모 요소의 전체 높이 사용 */
+}
+
+.scrollableContent {
+  overflow-y: auto; /* 스크롤 가능하게 설정 */
+  width: 100%;
 }
 
 .fullscreenAlbumImage {
