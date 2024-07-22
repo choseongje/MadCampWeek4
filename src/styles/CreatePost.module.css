@@ -1,0 +1,55 @@
+.container {
+    padding: 20px;
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .formGroup {
+    margin-bottom: 15px;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .input,
+  .textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  
+  .button,
+  .submitButton {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .board {
+    position: relative;
+    width: 70vw;
+    height: 50vh;
+    border: 1px solid #ccc;
+    margin: 20px auto;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.8); /* 흰색 배경 및 투명도 설정 */
+  }
+  
+  .draggableBox {
+    padding: 10px;
+    border: 1px solid #000;
+    cursor: move;
+    position: absolute;
+    resize: both;
+    overflow: auto;
+  }
+  

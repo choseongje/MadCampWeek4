@@ -18,13 +18,18 @@
     "node-fetch": "^2.7.0",
     "openai": "^4.52.7",
     "react": "^18",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
+    "react-resizable": "^3.0.5",
+    "react-router-dom": "^6.25.1",
     "spotify-web-api-js": "^1.5.2"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-resizable": "^3.0.8",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
