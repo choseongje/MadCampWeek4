@@ -1,37 +1,29 @@
-// src/components/Search.tsx
-
 import { useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
-import styles from "../styles/Search.module.css"; // 스타일 파일 임포트
+import styles from "../styles/Search.module.css";
 
 const spotifyApi = new SpotifyWebApi();
 
-interface SearchProps {
+const Search = ({
+  accessToken,
+  onTrackSelect,
+  onAddToQueue,
+}: {
   accessToken: string;
   onTrackSelect: (trackId: string) => void;
-}
+  onAddToQueue: (track: any) => void;
+}) => {
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-const Search = ({ accessToken, onTrackSelect }: SearchProps) => {
-  const [query, setQuery] = useState<string>("");
-  const [results, setResults] = useState<any[]>([]);
-
-  const handleSearch = () => {
-    if (!accessToken) return;
-
-    spotifyApi.setAccessToken(accessToken);
-    spotifyApi.searchTracks(query).then(
-      (data) => {
-        setResults(data.tracks.items);
-      },
-      (err) => {
-        console.error("Error searching tracks", err);
-      }
-    );
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value.length > 2) {
+      spotifyApi.searchTracks(e.target.value).then((res) => {
+        setSearchResults(res.tracks.items);
+      });
+    } else {
+      setSearchResults([]);
     }
   };
 
@@ -39,19 +31,22 @@ const Search = ({ accessToken, onTrackSelect }: SearchProps) => {
     <div className={styles.searchContainer}>
       <input
         type="text"
-        placeholder="Search for a song"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyPress={handleKeyPress}
+        placeholder="Search for a track"
+        value={searchTerm}
+        onChange={handleSearch}
+        className={styles.searchInput}
       />
-      <button onClick={handleSearch}>Search</button>
       <div className={styles.resultsContainer}>
-        {results.map((track) => (
+        {searchResults.map((track) => (
           <div key={track.id} className={styles.trackItem}>
-            <img src={track.album.images[0]?.url} alt={track.name} width="50" />
-            <div>{track.name}</div>
-            <div>{track.artists[0].name}</div>
+            <img
+              src={track.album.images[0].url}
+              alt={track.name}
+              className={styles.trackImage}
+            />
+            <p>{track.name}</p>
             <button onClick={() => onTrackSelect(track.id)}>Play</button>
+            <button onClick={() => onAddToQueue(track)}>Add to Queue</button>
           </div>
         ))}
       </div>

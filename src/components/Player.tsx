@@ -187,6 +187,19 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     setTrackId(selectedTrackId);
   };
 
+  const handleAddToQueue = (track: any) => {
+    setQueue((prevQueue) => [...prevQueue, track]);
+  };
+
+  const handleQueueTrackPlay = (trackId: string) => {
+    setTrackId(trackId);
+  };
+
+  const handleRemoveFromQueue = (index: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setQueue((prevQueue) => prevQueue.filter((_, i) => i !== index));
+  };
+
   const toggleFullscreen = () => {
     console.log("Toggling fullscreen mode");
     setIsFullscreen(!isFullscreen);
@@ -220,7 +233,11 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
   return (
     <div className={styles.playerContainer}>
-      <Search accessToken={accessToken} onTrackSelect={handleTrackSelect} />
+      <Search
+        accessToken={accessToken}
+        onTrackSelect={handleTrackSelect}
+        onAddToQueue={handleAddToQueue}
+      />
       <div
         className={`${styles.playbackBar} ${
           isFullscreen ? styles.fullscreen : ""
@@ -263,7 +280,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
             onClick={toggleFullscreen}
             className={styles.fullscreenToggle}
           >
-            ▲
+            {isFullscreen ? "▼" : "▲"}
           </button>
         </div>
         {isFullscreen && (
@@ -330,20 +347,30 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                 <div className={styles.queue}>
                   {queue.length > 0 ? (
                     queue.map((track, index) => (
-                      <div key={index} className={styles.queueItem}>
+                      <div
+                        key={index}
+                        className={styles.queueItem}
+                        onClick={() => handleQueueTrackPlay(track.id)}
+                      >
                         <img
                           src={track.album.images[0].url}
                           alt="Album cover"
                           className={styles.queueAlbumImage}
                         />
-                        <div>
-                          <p>{track.name}</p>
-                          <p>
+                        <div className={styles.queueDetails}>
+                          <p className={styles.queueTrackName}>{track.name}</p>
+                          <p className={styles.queueArtistName}>
                             {track.artists
                               .map((artist: any) => artist.name)
                               .join(", ")}
                           </p>
                         </div>
+                        <button
+                          onClick={(e) => handleRemoveFromQueue(index, e)}
+                          className={styles.removeButton}
+                        >
+                          Remove
+                        </button>
                       </div>
                     ))
                   ) : (
