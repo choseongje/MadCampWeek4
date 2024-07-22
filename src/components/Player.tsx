@@ -232,6 +232,87 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     }
   };
 
+  // 사용자 ID 가져오기
+  const getUserId = async (accessToken: string): Promise<string> => {
+    const response = await axios.get("https://api.spotify.com/v1/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data.id;
+  };
+
+  // 플레이리스트 생성
+  const createPlaylist = async (
+    accessToken: string,
+    userId: string,
+    playlistName: string
+  ): Promise<string> => {
+    const response = await axios.post(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        name: playlistName,
+        description: "Playlist created from queue",
+        public: false,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data.id;
+  };
+
+  // 트랙들을 플레이리스트에 추가
+  const addTracksToPlaylist = async (
+    accessToken: string,
+    playlistId: string,
+    trackUris: string[]
+  ): Promise<void> => {
+    await axios.post(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      {
+        uris: trackUris,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  };
+
+  // 재생 대기 목록을 플레이리스트로 저장하는 함수
+  const saveQueueAsPlaylist = async () => {
+    if (!accessToken || queue.length === 0) return;
+
+    try {
+      const userId = await getUserId(accessToken);
+      const playlistId = await createPlaylist(
+        accessToken,
+        userId,
+        "New Playlist from Queue"
+      );
+
+      await addTracksToPlaylist(
+        accessToken,
+        playlistId,
+        queue.map((track) => track.uri)
+      );
+      alert("플레이리스트가 성공적으로 생성되었습니다!");
+    } catch (error) {
+      console.error("플레이리스트 생성 중 오류가 발생했습니다:", error);
+      console.error(
+        "오류 내용:",
+        error.response ? error.response.data : error.message
+      );
+      alert("플레이리스트 생성 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className={styles.playerContainer}>
       <Search
@@ -391,7 +472,15 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                   </div>
                 )}
                 {activeTab === "playlist" && (
-                  <Playlist accessToken={accessToken} onSetQueue={setQueue} />
+                  <div className={styles.playlistTab}>
+                    <Playlist accessToken={accessToken} onSetQueue={setQueue} />
+                    <button
+                      className={styles.saveButton}
+                      onClick={saveQueueAsPlaylist}
+                    >
+                      재생 대기 목록을 플레이리스트로 저장
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
