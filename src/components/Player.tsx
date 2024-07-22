@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
 import Search from "./Search";
+import Playlist from "./Playlist";
 import styles from "../styles/Player.module.css";
 
 const spotifyApi = new SpotifyWebApi();
@@ -21,7 +22,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [lyrics, setLyrics] = useState<string>("");
   const [translatedLyrics, setTranslatedLyrics] = useState<string>("");
   const [activeTab, setActiveTab] = useState<
-    "lyrics" | "translatedLyrics" | "queue"
+    "lyrics" | "translatedLyrics" | "queue" | "playlist"
   >("lyrics");
   const [queue, setQueue] = useState<any[]>([]);
 
@@ -336,6 +337,14 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                 >
                   재생 대기 목록
                 </button>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "playlist" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("playlist")}
+                >
+                  플레이리스트
+                </button>
               </div>
               {activeTab === "lyrics" && (
                 <pre className={styles.lyrics}>{lyrics}</pre>
@@ -377,6 +386,9 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                     <p>재생 대기 목록이 비어 있습니다.</p>
                   )}
                 </div>
+              )}
+              {activeTab === "playlist" && (
+                <Playlist accessToken={accessToken} onSetQueue={setQueue} />
               )}
             </div>
           </div>
