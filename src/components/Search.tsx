@@ -18,7 +18,7 @@ const Search = ({
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    if (e.target.value.length > 2) {
+    if (e.target.value.length > 0) {
       spotifyApi.searchTracks(e.target.value).then((res) => {
         setSearchResults(res.tracks.items);
       });
