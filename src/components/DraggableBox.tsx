@@ -95,8 +95,6 @@ const DraggableBox: React.FC<DraggableBoxProps> = ({
           console.log(`Resized: ${id}`, data.size.width, data.size.height); // 디버그 로그 추가
           onResize(id, data.size.width, data.size.height);
         }}
-        minConstraints={[100, 100]}
-        maxConstraints={[300, 300]}
         resizeHandles={isResizable ? ["se"] : []}
         draggableOpts={{ disabled: !isResizable }}
       >

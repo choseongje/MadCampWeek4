@@ -8,6 +8,7 @@ import DraggableBox from "../../components/DraggableBox";
 import ColorPicker from "../../components/ColorPicker";
 import SearchTrack from "../../components/SearchTrack";
 import styles from "../../styles/CreatePost.module.css";
+import 'react-resizable/css/styles.css'; // 리사이즈 핸들 스타일 포함
 
 interface Box {
   id: number;
