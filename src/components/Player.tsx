@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
 import Search from "./Search";
@@ -25,6 +25,8 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     "lyrics" | "translatedLyrics" | "queue" | "playlist"
   >("lyrics");
   const [queue, setQueue] = useState<any[]>([]);
+  
+  const previousTrackId = useRef<string>("");
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -90,16 +92,15 @@ const Player = ({ accessToken }: { accessToken: string }) => {
               setProgress(state.position);
 
               const currentTrack = state.track_window.current_track;
-              if (currentTrack && currentTrack.id !== currentTrackId) {
+              if (currentTrack && currentTrack.id !== previousTrackId.current) {
                 console.log("Current track info:", currentTrack);
                 setAlbumImage(currentTrack.album.images[0].url);
                 setTrackName(currentTrack.name);
                 setArtistName(
-                  currentTrack.artists
-                    .map((artist: any) => artist.name)
-                    .join(", ")
+                  currentTrack.artists.map((artist: any) => artist.name).join(", ")
                 );
                 setCurrentTrackId(currentTrack.id);
+                previousTrackId.current = currentTrack.id;
               }
             });
 
