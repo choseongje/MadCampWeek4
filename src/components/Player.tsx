@@ -23,7 +23,6 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [translatedLyrics, setTranslatedLyrics] = useState<string>("");
   const [queue, setQueue] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<string>("lyrics");
-  const [playlists, setPlaylists] = useState<any[]>([]);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -274,10 +273,6 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       }
 
       alert("플레이리스트가 생성되었습니다.");
-      setPlaylists((prevPlaylists) => [
-        ...prevPlaylists,
-        playlistResponse.data,
-      ]);
     } catch (error) {
       console.error("플레이리스트 생성 중 오류가 발생했습니다.", error);
       alert("플레이리스트 생성 중 오류가 발생했습니다.");
@@ -408,44 +403,46 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                 {activeTab === "queue" && (
                   <div className={styles.queue}>
                     {queue.length > 0 ? (
-                      queue.map((track, index) => (
-                        <div
-                          key={index}
-                          className={styles.queueItem}
-                          onClick={() => handleQueueTrackPlay(track.id)}
-                        >
-                          <img
-                            src={track.album.images[0].url}
-                            alt="Album cover"
-                            className={styles.queueAlbumImage}
-                          />
-                          <div className={styles.queueDetails}>
-                            <p className={styles.queueTrackName}>
-                              {track.name}
-                            </p>
-                            <p className={styles.queueArtistName}>
-                              {track.artists
-                                .map((artist: any) => artist.name)
-                                .join(", ")}
-                            </p>
-                          </div>
-                          <button
-                            onClick={(e) => handleRemoveFromQueue(index, e)}
-                            className={styles.removeButton}
+                      <>
+                        {queue.map((track, index) => (
+                          <div
+                            key={index}
+                            className={styles.queueItem}
+                            onClick={() => handleQueueTrackPlay(track.id)}
                           >
-                            Remove
-                          </button>
-                        </div>
-                      ))
+                            <img
+                              src={track.album.images[0].url}
+                              alt="Album cover"
+                              className={styles.queueAlbumImage}
+                            />
+                            <div className={styles.queueDetails}>
+                              <p className={styles.queueTrackName}>
+                                {track.name}
+                              </p>
+                              <p className={styles.queueArtistName}>
+                                {track.artists
+                                  .map((artist: any) => artist.name)
+                                  .join(", ")}
+                              </p>
+                            </div>
+                            <button
+                              onClick={(e) => handleRemoveFromQueue(index, e)}
+                              className={styles.removeButton}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          className={styles.createPlaylistButton}
+                          onClick={handleCreatePlaylist}
+                        >
+                          Create Playlist
+                        </button>
+                      </>
                     ) : (
                       <p>재생 대기 목록이 비어 있습니다.</p>
                     )}
-                    <button
-                      className={styles.createPlaylistButton}
-                      onClick={handleCreatePlaylist}
-                    >
-                      Create Playlist
-                    </button>
                   </div>
                 )}
                 {activeTab === "playlist" && (
