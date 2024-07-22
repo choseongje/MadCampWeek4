@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
 import Search from "./Search";
@@ -21,12 +21,9 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [lyrics, setLyrics] = useState<string>("");
   const [translatedLyrics, setTranslatedLyrics] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<
-    "lyrics" | "translatedLyrics" | "queue" | "playlist"
-  >("lyrics");
   const [queue, setQueue] = useState<any[]>([]);
-  
-  const previousTrackId = useRef<string>("");
+  const [activeTab, setActiveTab] = useState<string>("lyrics");
+  const [playlists, setPlaylists] = useState<any[]>([]);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -92,15 +89,16 @@ const Player = ({ accessToken }: { accessToken: string }) => {
               setProgress(state.position);
 
               const currentTrack = state.track_window.current_track;
-              if (currentTrack && currentTrack.id !== previousTrackId.current) {
+              if (currentTrack && currentTrack.id !== currentTrackId) {
                 console.log("Current track info:", currentTrack);
                 setAlbumImage(currentTrack.album.images[0].url);
                 setTrackName(currentTrack.name);
                 setArtistName(
-                  currentTrack.artists.map((artist: any) => artist.name).join(", ")
+                  currentTrack.artists
+                    .map((artist: any) => artist.name)
+                    .join(", ")
                 );
                 setCurrentTrackId(currentTrack.id);
-                previousTrackId.current = currentTrack.id;
               }
             });
 
@@ -189,19 +187,6 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     setTrackId(selectedTrackId);
   };
 
-  const handleAddToQueue = (track: any) => {
-    setQueue((prevQueue) => [...prevQueue, track]);
-  };
-
-  const handleQueueTrackPlay = (trackId: string) => {
-    setTrackId(trackId);
-  };
-
-  const handleRemoveFromQueue = (index: number, event: React.MouseEvent) => {
-    event.stopPropagation();
-    setQueue((prevQueue) => prevQueue.filter((_, i) => i !== index));
-  };
-
   const toggleFullscreen = () => {
     console.log("Toggling fullscreen mode");
     setIsFullscreen(!isFullscreen);
@@ -233,83 +218,68 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     }
   };
 
-  // 사용자 ID 가져오기
-  const getUserId = async (accessToken: string): Promise<string> => {
-    const response = await axios.get("https://api.spotify.com/v1/me", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data.id;
+  const handleAddToQueue = (track: any) => {
+    setQueue((prevQueue) => [...prevQueue, track]);
   };
 
-  // 플레이리스트 생성
-  const createPlaylist = async (
-    accessToken: string,
-    userId: string,
-    playlistName: string
-  ): Promise<string> => {
-    const response = await axios.post(
-      `https://api.spotify.com/v1/users/${userId}/playlists`,
-      {
-        name: playlistName,
-        description: "Playlist created from queue",
-        public: false,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data.id;
+  const handleQueueTrackPlay = (trackId: string) => {
+    setTrackId(trackId);
   };
 
-  // 트랙들을 플레이리스트에 추가
-  const addTracksToPlaylist = async (
-    accessToken: string,
-    playlistId: string,
-    trackUris: string[]
-  ): Promise<void> => {
-    await axios.post(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-      {
-        uris: trackUris,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+  const handleRemoveFromQueue = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setQueue((prevQueue) => prevQueue.filter((_, i) => i !== index));
   };
 
-  // 재생 대기 목록을 플레이리스트로 저장하는 함수
-  const saveQueueAsPlaylist = async () => {
-    if (!accessToken || queue.length === 0) return;
-
+  const handleCreatePlaylist = async () => {
     try {
-      const userId = await getUserId(accessToken);
-      const playlistId = await createPlaylist(
-        accessToken,
-        userId,
-        "New Playlist from Queue"
+      const userResponse = await axios.get("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const userId = userResponse.data.id;
+      const playlistResponse = await axios.post(
+        `https://api.spotify.com/v1/users/${userId}/playlists`,
+        {
+          name: "New Playlist",
+          description: "Created with Spotify API",
+          public: false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      await addTracksToPlaylist(
-        accessToken,
-        playlistId,
-        queue.map((track) => track.uri)
-      );
-      alert("플레이리스트가 성공적으로 생성되었습니다!");
+      const playlistId = playlistResponse.data.id;
+
+      if (queue.length > 0) {
+        const uris = queue.map((track) => track.uri);
+        await axios.post(
+          `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+          {
+            uris,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+
+      alert("플레이리스트가 생성되었습니다.");
+      setPlaylists((prevPlaylists) => [
+        ...prevPlaylists,
+        playlistResponse.data,
+      ]);
     } catch (error) {
-      console.error("플레이리스트 생성 중 오류가 발생했습니다:", error);
-      console.error(
-        "오류 내용:",
-        error.response ? error.response.data : error.message
-      );
+      console.error("플레이리스트 생성 중 오류가 발생했습니다.", error);
       alert("플레이리스트 생성 중 오류가 발생했습니다.");
     }
   };
@@ -470,18 +440,16 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                     ) : (
                       <p>재생 대기 목록이 비어 있습니다.</p>
                     )}
+                    <button
+                      className={styles.createPlaylistButton}
+                      onClick={handleCreatePlaylist}
+                    >
+                      Create Playlist
+                    </button>
                   </div>
                 )}
                 {activeTab === "playlist" && (
-                  <div className={styles.playlistTab}>
-                    <Playlist accessToken={accessToken} onSetQueue={setQueue} />
-                    <button
-                      className={styles.saveButton}
-                      onClick={saveQueueAsPlaylist}
-                    >
-                      재생 대기 목록을 플레이리스트로 저장
-                    </button>
-                  </div>
+                  <Playlist accessToken={accessToken} onSetQueue={setQueue} />
                 )}
               </div>
             </div>
