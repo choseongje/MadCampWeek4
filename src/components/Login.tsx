@@ -1,40 +1,57 @@
 import { useEffect } from "react";
-import { useRouter } from "next/navigation"; // useRouter를 올바르게 가져옵니다
+import { useRouter } from "next/navigation";
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
 
 const spotifyApi = new SpotifyWebApi();
 
 const Login = () => {
-  const router = useRouter(); // useRouter 훅을 사용합니다
+  const router = useRouter();
 
   const handleLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
-    const scopes =
-      "streaming user-read-email user-read-private user-read-playback-state user-modify-playback-state";
+    const scopes = [
+      "streaming",
+      "user-read-email",
+      "user-read-private",
+      "user-read-playback-state",
+      "user-modify-playback-state",
+      "playlist-modify-public",
+      "playlist-modify-private",
+    ].join(" ");
+
     window.location.href = `https://accounts.spotify.com/authorize?response_type=token&client_id=${clientId}&scope=${encodeURIComponent(
       scopes
     )}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("spotify_access_token");
+    localStorage.removeItem("spotify_token_expires_in");
+    router.push("/");
+    window.location.reload(); // 페이지를 새로 고쳐 토큰을 완전히 제거합니다
   };
 
   const fetchUserProfile = async (accessToken: string) => {
     spotifyApi.setAccessToken(accessToken);
     try {
       const response = await spotifyApi.getMe();
-      const { id, email, display_name, country, followers, images, product } = response;
-      const profileImageUrl = images && images.length > 0 ? images[0].url : null;
-      await axios.post('http://172.10.7.88:80/saveUser', { 
-        id, 
-        email, 
-        display_name, 
-        country, 
-        followers: followers.total, 
-        profile_image_url: profileImageUrl, 
-        product 
+      const { id, email, display_name, country, followers, images, product } =
+        response;
+      const profileImageUrl =
+        images && images.length > 0 ? images[0].url : null;
+      await axios.post("http://172.10.7.88:80/saveUser", {
+        id,
+        email,
+        display_name,
+        country,
+        followers: followers.total,
+        profile_image_url: profileImageUrl,
+        product,
       });
       console.log("User profile saved:", response);
-      router.push("/player"); // 로그인 후 리디렉션합니다
+      router.push("/"); // 로그인 후 리디렉션합니다
     } catch (error) {
       console.error("Error fetching user profile", error);
     }
