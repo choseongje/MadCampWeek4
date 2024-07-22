@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Login from "../components/Login";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
@@ -40,17 +41,23 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <h1 className={styles.header}>Spotify Visualizer</h1>
-      <div className={styles.tabBar}>
-        <Link href="/player" className={styles.tabButton}>
-          플레이어
-        </Link>
-        <Link href="/community" className={styles.tabButton}>
-          커뮤니티
-        </Link>
-        <Link href="/visualizer" className={styles.tabButton}>
-          비주얼라이저
-        </Link>
-      </div>
+      {!accessToken ? (
+        <Login />
+      ) : (
+        <div className={styles.container}>
+          <div className={styles.tabBar}>
+            <Link href="/player" className={styles.tabButton}>
+              플레이어
+            </Link>
+            <Link href="/community" className={styles.tabButton}>
+              커뮤니티
+            </Link>
+            <Link href="/visualizer" className={styles.tabButton}>
+              비주얼라이저
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -22,19 +22,21 @@ const Login = () => {
     spotifyApi.setAccessToken(accessToken);
     try {
       const response = await spotifyApi.getMe();
-      const { id, email, display_name, country, followers, images, product } = response;
-      const profileImageUrl = images && images.length > 0 ? images[0].url : null;
-      await axios.post('http://172.10.7.88:80/saveUser', { 
-        id, 
-        email, 
-        display_name, 
-        country, 
-        followers: followers.total, 
-        profile_image_url: profileImageUrl, 
-        product 
+      const { id, email, display_name, country, followers, images, product } =
+        response;
+      const profileImageUrl =
+        images && images.length > 0 ? images[0].url : null;
+      await axios.post("http://172.10.7.88:80/saveUser", {
+        id,
+        email,
+        display_name,
+        country,
+        followers: followers.total,
+        profile_image_url: profileImageUrl,
+        product,
       });
       console.log("User profile saved:", response);
-      router.push("/player"); // 로그인 후 리디렉션합니다
+      router.push("/"); // 로그인 후 리디렉션합니다
     } catch (error) {
       console.error("Error fetching user profile", error);
     }
