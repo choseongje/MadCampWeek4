@@ -3,10 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Player from "../../components/Player";
-import BasicVisualizer from "../../components/BasicVisualizer";
-import CircularVisualizer from "../../components/CircularVisualizer";
-import WaveformVisualizer from "../../components/WaveformVisualizer";
-import RadialVisualizer from "../../components/RadialVisualizer";
 import Login from "../../components/Login";
 import styles from "../../styles/Home.module.css";
 
@@ -73,50 +69,6 @@ export default function PlayerPage() {
       ) : (
         <div>
           <Player accessToken={accessToken} />
-          <input
-            type="file"
-            accept="audio/*"
-            onChange={handleFileChange}
-            className={styles.fileInput}
-          />
-          <select
-            onChange={handleVisualizerChange}
-            value={visualizerType}
-            className={styles.select}
-          >
-            <option value="basic">Basic Visualizer</option>
-            <option value="circular">Circular Visualizer</option>
-            <option value="waveform">Waveform Visualizer</option>
-            <option value="radial">Radial Visualizer</option>
-          </select>
-          {audioFile && visualizerType === "basic" && (
-            <BasicVisualizer
-              audioFile={audioFile}
-              isPlaying={isPlaying}
-              onPlayPause={handlePlayPause}
-            />
-          )}
-          {audioFile && visualizerType === "circular" && (
-            <CircularVisualizer
-              audioFile={audioFile}
-              isPlaying={isPlaying}
-              onPlayPause={handlePlayPause}
-            />
-          )}
-          {audioFile && visualizerType === "waveform" && (
-            <WaveformVisualizer
-              audioFile={audioFile}
-              isPlaying={isPlaying}
-              onPlayPause={handlePlayPause}
-            />
-          )}
-          {audioFile && visualizerType === "radial" && (
-            <RadialVisualizer
-              audioFile={audioFile}
-              isPlaying={isPlaying}
-              onPlayPause={handlePlayPause}
-            />
-          )}
         </div>
       )}
     </div>

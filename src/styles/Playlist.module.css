@@ -1,0 +1,43 @@
+.playlistContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.playlistItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  cursor: pointer;
+  width: calc(30% - 40px); /* 한 줄에 3개씩 */
+  max-width: 300px;
+}
+
+.playlistItem img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.playlistItem p {
+  margin: 0;
+  color: white;
+}
+
+.playlistItem .playlistName {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.playlistItem .playlistOwner {
+  font-size: 0.9em;
+  color: #bbb;
+}

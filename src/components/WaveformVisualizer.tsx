@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "../styles/Visualizer.module.css";
 
 const WaveformVisualizer = ({
@@ -15,6 +15,7 @@ const WaveformVisualizer = ({
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const [color, setColor] = useState("#00FF00");
 
   useEffect(() => {
     if (audioContextRef.current) {
@@ -58,7 +59,7 @@ const WaveformVisualizer = ({
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           ctx.lineWidth = 2;
-          ctx.strokeStyle = "rgb(0, 255, 0)";
+          ctx.strokeStyle = color;
 
           ctx.beginPath();
 
@@ -91,7 +92,7 @@ const WaveformVisualizer = ({
         audioContextRef.current.close();
       }
     };
-  }, [audioFile]);
+  }, [audioFile, color]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -103,12 +104,25 @@ const WaveformVisualizer = ({
     }
   }, [isPlaying]);
 
+  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setColor(event.target.value);
+    onPlayPause(); // 색상 변경 시 재생/정지 상태를 반대로 변경
+    setTimeout(onPlayPause, 0); // 버튼 상태를 play로 변경하기 위해 다시 재생/정지 상태를 변경
+  };
+
   return (
     <div className={styles.visualizerContainer}>
       <div className={styles.controls}>
         <button className={styles.button} onClick={onPlayPause}>
           {isPlaying ? "Pause" : "Play"}
         </button>
+        <input
+          type="color"
+          value={color}
+          onChange={handleColorChange}
+          className={styles.colorPicker}
+          defaultValue="#00FF00"
+        />
       </div>
       <canvas
         ref={canvasRef}

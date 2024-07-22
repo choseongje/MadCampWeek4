@@ -1,130 +1,289 @@
 .playerContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .playbackBar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: bottom 0.3s ease-in-out;
-  }
-  
-  .controls {
-    display: flex;
-    align-items: center;
-  }
-  
-  .controls button {
-    margin-right: 10px;
-    padding: 5px 10px;
-    background-color: #1db954;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .controls button:hover {
-    background-color: #1ed760;
-  }
-  
-  .progress {
-    display: flex;
-    align-items: center;
-  }
-  
-  .progress input[type="range"] {
-    margin-left: 10px;
-    width: 300px;
-  }
-  
-  .albumImage {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-    border-radius: 5px;
-  }
-  
-  .fullscreenToggle {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  .fullscreen {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  .fullscreenContent {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: space-between;
-    padding: 20px;
-  }
-  
-  .leftContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* 세로 중앙 정렬 */
-  }
-  
-  .rightContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-    overflow-y: auto; /* 스크롤 가능하게 설정 */
-    height: 100%; /* 부모 요소의 전체 높이 사용 */
-  }
-  
-  .fullscreenAlbumImage {
-    width: 300px;
-    height: 300px;
-    margin-bottom: 20px;
-  }
-  
-  .fullscreenProgress {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* 가로 중앙 정렬 */
-    margin-top: 20px;
-  }
-  
-  .fullscreenProgress input[type="range"] {
-    margin-left: 10px;
-    width: 500px;
-  }
-  
-  .lyrics {
-    white-space: pre-wrap;
-    text-align: left;
-    margin-bottom: 20px; /* 아래쪽 여백 추가 */
-    max-height: 300px; /* 박스의 최대 높이 설정 */
-    overflow-y: auto; /* 스크롤 가능하게 설정 */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.playbackBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: bottom 0.3s ease-in-out;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+}
+
+.controls button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #1db954;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.controls button:hover {
+  background-color: #1ed760;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+}
+
+.progress input[type="range"] {
+  margin-left: 10px;
+  width: 300px;
+}
+
+.albumImage {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.fullscreenToggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.fullscreen {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fullscreenContent {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  padding: 20px;
+  overflow-y: hidden;
+}
+
+.leftContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 세로 중앙 정렬 */
+}
+
+.rightContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  height: 100%; /* 부모 요소의 전체 높이 사용 */
+}
+
+.scrollableContent {
+  overflow-y: auto; /* 스크롤 가능하게 설정 */
+  width: 100%;
+}
+
+.fullscreenAlbumImage {
+  width: 300px;
+  height: 300px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.fullscreenProgress {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 가로 중앙 정렬 */
+  margin-top: 20px;
+}
+
+.fullscreenProgress input[type="range"] {
+  margin-left: 10px;
+  width: 500px;
+}
+
+.lyrics {
+  white-space: pre-wrap;
+  text-align: center; /* 중앙 정렬 */
+  margin-bottom: 20px; /* 아래쪽 여백 추가 */
+  max-height: 600px; /* 박스의 최대 높이 설정 */
+  overflow-y: auto; /* 스크롤 가능하게 설정 */
+  color: #f5f5f5; /* 텍스트 색상 조정 */
+  padding: 20px; /* 패딩 추가 */
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* 폰트 변경 */
+  font-size: 16px; /* 폰트 크기 조정 */
+  line-height: 1.5; /* 줄 간격 조정 */
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-bottom: 2px solid transparent;
+  outline: none;
+  margin: 0 5px;
+  border-radius: 10px 10px 0 0;
+  transition: background-color 0.3s ease;
+}
+
+.tab:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.activeTab {
+  border-bottom: 2px solid #1db954;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.queueItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  width: 80%; /* 너비를 80%로 줄이기 */
+  max-width: 500px; /* 최대 너비 설정 */
+  cursor: pointer;
+}
+
+.queueItem img {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.queueItem p {
+  margin: 0;
+}
+
+.queueItem p:first-of-type {
+  font-weight: bold;
+}
+
+.queueAlbumImage {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.queueDetails {
+  flex: 1;
+}
+
+.removeButton {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #d9534f;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.removeButton:hover {
+  background-color: #c9302c;
+}
+
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  padding: 10px;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.resultsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.trackItem {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.trackItem img {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.trackItem p {
+  margin: 0;
+  flex: 1;
+}
+
+.trackItem button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #1db954;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.trackItem button:hover {
+  background-color: #1ed760;
+}

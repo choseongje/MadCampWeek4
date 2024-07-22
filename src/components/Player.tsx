@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
 import Search from "./Search";
+import Playlist from "./Playlist";
 import styles from "../styles/Player.module.css";
 
 const spotifyApi = new SpotifyWebApi();
@@ -20,6 +21,10 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [lyrics, setLyrics] = useState<string>("");
   const [translatedLyrics, setTranslatedLyrics] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<
+    "lyrics" | "translatedLyrics" | "queue" | "playlist"
+  >("lyrics");
+  const [queue, setQueue] = useState<any[]>([]);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -183,6 +188,19 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     setTrackId(selectedTrackId);
   };
 
+  const handleAddToQueue = (track: any) => {
+    setQueue((prevQueue) => [...prevQueue, track]);
+  };
+
+  const handleQueueTrackPlay = (trackId: string) => {
+    setTrackId(trackId);
+  };
+
+  const handleRemoveFromQueue = (index: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setQueue((prevQueue) => prevQueue.filter((_, i) => i !== index));
+  };
+
   const toggleFullscreen = () => {
     console.log("Toggling fullscreen mode");
     setIsFullscreen(!isFullscreen);
@@ -216,7 +234,11 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
   return (
     <div className={styles.playerContainer}>
-      <Search accessToken={accessToken} onTrackSelect={handleTrackSelect} />
+      <Search
+        accessToken={accessToken}
+        onTrackSelect={handleTrackSelect}
+        onAddToQueue={handleAddToQueue}
+      />
       <div
         className={`${styles.playbackBar} ${
           isFullscreen ? styles.fullscreen : ""
@@ -259,7 +281,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
             onClick={toggleFullscreen}
             className={styles.fullscreenToggle}
           >
-            ▲
+            {isFullscreen ? "▼" : "▲"}
           </button>
         </div>
         {isFullscreen && (
@@ -290,10 +312,88 @@ const Player = ({ accessToken }: { accessToken: string }) => {
               </div>
             </div>
             <div className={styles.rightContent}>
-              <h2>가사</h2>
-              <pre className={styles.lyrics}>{lyrics}</pre>
-              <h2>번역된 가사</h2>
-              <pre className={styles.lyrics}>{translatedLyrics}</pre>
+              <div className={styles.tabs}>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "lyrics" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("lyrics")}
+                >
+                  가사
+                </button>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "translatedLyrics" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("translatedLyrics")}
+                >
+                  번역된 가사
+                </button>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "queue" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("queue")}
+                >
+                  재생 대기 목록
+                </button>
+                <button
+                  className={`${styles.tab} ${
+                    activeTab === "playlist" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("playlist")}
+                >
+                  플레이리스트
+                </button>
+              </div>
+              <div className={styles.scrollableContent}>
+                {activeTab === "lyrics" && (
+                  <pre className={styles.lyrics}>{lyrics}</pre>
+                )}
+                {activeTab === "translatedLyrics" && (
+                  <pre className={styles.lyrics}>{translatedLyrics}</pre>
+                )}
+                {activeTab === "queue" && (
+                  <div className={styles.queue}>
+                    {queue.length > 0 ? (
+                      queue.map((track, index) => (
+                        <div
+                          key={index}
+                          className={styles.queueItem}
+                          onClick={() => handleQueueTrackPlay(track.id)}
+                        >
+                          <img
+                            src={track.album.images[0].url}
+                            alt="Album cover"
+                            className={styles.queueAlbumImage}
+                          />
+                          <div className={styles.queueDetails}>
+                            <p className={styles.queueTrackName}>
+                              {track.name}
+                            </p>
+                            <p className={styles.queueArtistName}>
+                              {track.artists
+                                .map((artist: any) => artist.name)
+                                .join(", ")}
+                            </p>
+                          </div>
+                          <button
+                            onClick={(e) => handleRemoveFromQueue(index, e)}
+                            className={styles.removeButton}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <p>재생 대기 목록이 비어 있습니다.</p>
+                    )}
+                  </div>
+                )}
+                {activeTab === "playlist" && (
+                  <Playlist accessToken={accessToken} onSetQueue={setQueue} />
+                )}
+              </div>
             </div>
           </div>
         )}
