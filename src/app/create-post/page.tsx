@@ -157,6 +157,22 @@ export default function CreatePostPage() {
       .catch((error) => console.error("Error generating image:", error));
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+
+    fetch("http://172.10.7.88:80/upload-image", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setBackgroundImage(`http://172.10.7.88:80/${data.imageUrl}`);
+      })
+      .catch((error) => console.error("Error uploading image:", error));
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.container} style={{ backgroundImage: `url(${backgroundImage})` }}>
@@ -185,6 +201,16 @@ export default function CreatePostPage() {
               onChange={(e) => setBackgroundDescription(e.target.value)}
             />
             <button type="button" className={styles.button} onClick={generateBackground}>배경 생성</button>
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label} htmlFor="backgroundImage">배경 이미지 업로드</label>
+            <input
+              className={styles.input}
+              type="file"
+              id="backgroundImage"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
           </div>
           <div
             className={styles.board}
