@@ -62,6 +62,24 @@
   cursor: pointer;
 }
 
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
 .fullscreen {
   width: 100%;
   height: 100%;
@@ -75,6 +93,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+.fullscreenExit {
+  animation: slideOut 0.3s ease-out;
 }
 
 .fullscreenContent {
@@ -285,5 +308,36 @@
 }
 
 .trackItem button:hover {
+  background-color: #1ed760;
+}
+
+.playlistCreation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.playlistNameInput {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 400px;
+}
+
+.createPlaylistButton {
+  padding: 10px 20px;
+  background-color: #1db954;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.createPlaylistButton:hover {
   background-color: #1ed760;
 }
