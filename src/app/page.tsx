@@ -62,7 +62,7 @@ export default function Home() {
         width={80} // 원하는 width 값 설정
         height={80} // 원하는 height 값 설정
       />
-      <h1 className={styles.header}>Spotify Visualizer</h1>
+      <h1 className={styles.header}>Music is my life</h1>
       {!accessToken ? (
         <Login />
       ) : (

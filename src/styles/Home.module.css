@@ -49,17 +49,21 @@
 }
 
 .logoutButton {
-  margin-top: 20px;
+  position: absolute; /* 화면의 특정 위치에 고정 */
+  top: 20px; /* 위쪽 여백 */
+  right: 20px; /* 오른쪽 여백 */
   padding: 10px 20px;
   background-color: #d9534f;
   border: none;
   color: white;
   cursor: pointer;
   border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .logoutButton:hover {
   background-color: #c9302c;
+  transform: scale(1.1); /* 호버 시 크기 확대 */
 }
 
 .logo {
