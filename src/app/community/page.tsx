@@ -16,6 +16,11 @@ interface Box {
   top: number;
   color: string;
   text: string;
+  track?: {
+    albumImage: string;
+    artistName: string;
+    trackName: string;
+  };
 }
 
 export default function CommunityPage() {
@@ -39,8 +44,23 @@ export default function CommunityPage() {
       <button className={styles.button} onClick={() => router.push("/create-post")}>게시물 작성하기</button>
       <div className={styles.posts}>
         {posts.map((post) => (
-          <div key={post.id} className={styles.post}>
-            <h2 className={styles.postTitle} onClick={() => handlePostClick(post.id)}>{post.title}</h2>
+          <div key={post.id} className={styles.post} onClick={() => handlePostClick(post.id)}>
+            <h2 className={styles.postTitle}>{post.title}</h2>
+            <div className={styles.postContent}>
+              {post.content.filter(box => box.track).map((box) => (
+                <div key={box.id} className={styles.box} style={{ backgroundColor: box.color }}>
+                  {box.track && (
+                    <div className={styles.trackInfo}>
+                      <img src={box.track.albumImage} alt="Album Cover" className={styles.albumCover} />
+                      <div>
+                        <p className={styles.trackName}>{box.track.trackName}</p>
+                        <p className={styles.artistName}>{box.track.artistName}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>

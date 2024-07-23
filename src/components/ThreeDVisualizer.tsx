@@ -86,7 +86,7 @@ const ThreeDVisualizer: React.FC = () => {
             }
           `,
           side: THREE.DoubleSide,
-          wireframe: true, // 와이어프레임 모드
+          wireframe: false, // 와이어프레임 모드
         });
         const wave = new THREE.Mesh(geometry, material);
         wave.position.set(0, height / 2, 0); // 원기둥의 중심을 설정
