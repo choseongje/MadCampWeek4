@@ -27,6 +27,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [playlistName, setPlaylistName] = useState<string>("");
   const [isCreatingPlaylist, setIsCreatingPlaylist] = useState<boolean>(false);
 
+  const defaultAlbumImage = "/default_image.png";
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -361,7 +362,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
           <div className={styles.fullscreenContent}>
             <div className={styles.leftContent}>
               <img
-                src={albumImage}
+                src={albumImage || defaultAlbumImage}
                 alt="Album cover"
                 className={styles.fullscreenAlbumImage}
               />
