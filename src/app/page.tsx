@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import Login from "../components/Login";
-import styles from "../styles/Home.module.css";
+import Styles from "../styles/Quadrant.module.css";
 
 export default function Home() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,34 +43,51 @@ export default function Home() {
     localStorage.removeItem("spotify_access_token");
     localStorage.removeItem("spotify_token_expires_in");
     setAccessToken(null);
-    window.location.reload(); // 페이지를 새로 고쳐 토큰을 완전히 제거합니다
+    router.push("/"); // 로그인 페이지로 리디렉션
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.header}>Spotify Visualizer</h1>
+    <div className={Styles.container}>
+      <Image
+        src="/YaOng4.png"
+        alt="Logo"
+        className={Styles.logo}
+        width={80}
+        height={80}
+        onClick={() => router.push("/")}
+      />
       {!accessToken ? (
         <Login />
       ) : (
-        <div className={styles.container}>
-          <div className={styles.tabBar}>
-            <Link href="/player" className={styles.tabButton}>
-              플레이어
-            </Link>
-            <Link href="/community" className={styles.tabButton}>
-              커뮤니티
-            </Link>
-            <Link href="/visualizer" className={styles.tabButton}>
-              비주얼라이저
-            </Link>
-            <Link href="/ThreeDvisualizer" className={styles.tabButton}>
-              3D 비주얼라이저
-            </Link>
-          </div>
-          <button onClick={handleLogout} className={styles.logoutButton}>
-            Logout
+        <>
+          <button className={Styles.logoutButton} onClick={handleLogout}>
+            로그아웃
           </button>
-        </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/player")}
+          >
+            <div className={Styles.quadrantText}>플레이어</div>
+          </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/community")}
+          >
+            <div className={Styles.quadrantText}>커뮤니티</div>
+          </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/visualizer")}
+          >
+            <div className={Styles.quadrantText}>2D 비주얼라이저</div>
+          </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/ThreeDvisualizer")}
+          >
+            <div className={Styles.quadrantText}>3D 비주얼라이저</div>
+          </div>
+        </>
       )}
     </div>
   );

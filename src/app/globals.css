@@ -2,7 +2,7 @@ body {
   font-family: Arial, sans-serif;
   text-align: center;
   background-color: #fff; /* 배경 색상을 흰색으로 변경 */
-  color: #333; /* 글자 색상도 어두운 색으로 변경 */
+  color: #ffffff; /* 글자 색상도 어두운 색으로 변경 */
 }
 
 #visualizer {
@@ -12,7 +12,8 @@ body {
   background-color: #282828;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }
