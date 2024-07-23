@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -61,6 +61,9 @@ export default function Home() {
             </Link>
             <Link href="/visualizer" className={styles.tabButton}>
               비주얼라이저
+            </Link>
+            <Link href="/ThreeDvisualizer" className={styles.tabButton}>
+              3D 비주얼라이저
             </Link>
           </div>
           <button onClick={handleLogout} className={styles.logoutButton}>
