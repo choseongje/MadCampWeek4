@@ -2,16 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import Login from "../components/Login";
 import Image from "next/image";
-import Logo from "../../public/YaOng4.png";
-import styles from "../styles/Home.module.css";
+import Login from "../components/Login";
+import Styles from "../styles/Quadrant.module.css";
 
 export default function Home() {
   const searchParams = useSearchParams();
-  const [accessToken, setAccessToken] = useState<string | null>(null);
   const router = useRouter();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
     const token = searchParams.get("access_token");
@@ -45,46 +43,51 @@ export default function Home() {
     localStorage.removeItem("spotify_access_token");
     localStorage.removeItem("spotify_token_expires_in");
     setAccessToken(null);
-    window.location.reload(); // 페이지를 새로 고쳐 토큰을 완전히 제거합니다
-  };
-
-  const handleLogoClick = () => {
-    router.push("/");
+    router.push("/"); // 로그인 페이지로 리디렉션
   };
 
   return (
-    <div className={styles.container}>
+    <div className={Styles.container}>
       <Image
-        src={Logo}
+        src="/YaOng4.png"
         alt="Logo"
-        className={styles.logo}
-        onClick={handleLogoClick}
-        width={80} // 원하는 width 값 설정
-        height={80} // 원하는 height 값 설정
+        className={Styles.logo}
+        width={80}
+        height={80}
+        onClick={() => router.push("/")}
       />
-      <h1 className={styles.header}>Music is my life</h1>
       {!accessToken ? (
         <Login />
       ) : (
-        <div className={styles.container}>
-          <div className={styles.tabBar}>
-            <Link href="/player" className={styles.tabButton}>
-              플레이어
-            </Link>
-            <Link href="/community" className={styles.tabButton}>
-              커뮤니티
-            </Link>
-            <Link href="/visualizer" className={styles.tabButton}>
-              비주얼라이저
-            </Link>
-            <Link href="/ThreeDvisualizer" className={styles.tabButton}>
-              3D 비주얼라이저
-            </Link>
-          </div>
-          <button onClick={handleLogout} className={styles.logoutButton}>
-            Logout
+        <>
+          <button className={Styles.logoutButton} onClick={handleLogout}>
+            로그아웃
           </button>
-        </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/player")}
+          >
+            <div className={Styles.quadrantText}>플레이어</div>
+          </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/community")}
+          >
+            <div className={Styles.quadrantText}>커뮤니티</div>
+          </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/visualizer")}
+          >
+            <div className={Styles.quadrantText}>2D 비주얼라이저</div>
+          </div>
+          <div
+            className={Styles.quadrant}
+            onClick={() => router.push("/ThreeDvisualizer")}
+          >
+            <div className={Styles.quadrantText}>3D 비주얼라이저</div>
+          </div>
+        </>
       )}
     </div>
   );
