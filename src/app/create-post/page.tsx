@@ -14,8 +14,8 @@ interface Box {
   id: number;
   left: number;
   top: number;
-  width: number; // 필수 항목으로 수정
-  height: number; // 필수 항목으로 수정
+  width: number;
+  height: number;
   color?: string;
   text?: string;
   track?: {
@@ -152,7 +152,7 @@ export default function CreatePostPage() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setBackgroundImage(data.imageUrl);
+        setBackgroundImage(`http://172.10.7.88:80/${data.imageUrl}`);
       })
       .catch((error) => console.error("Error generating image:", error));
   };
