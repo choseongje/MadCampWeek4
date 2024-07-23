@@ -19,10 +19,13 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   const [trackName, setTrackName] = useState<string>("");
   const [artistName, setArtistName] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [isExitingFullscreen, setIsExitingFullscreen] = useState(false);
   const [lyrics, setLyrics] = useState<string>("");
   const [translatedLyrics, setTranslatedLyrics] = useState<string>("");
   const [queue, setQueue] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<string>("lyrics");
+  const [playlistName, setPlaylistName] = useState<string>("");
+  const [isCreatingPlaylist, setIsCreatingPlaylist] = useState<boolean>(false);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -187,8 +190,15 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   };
 
   const toggleFullscreen = () => {
-    console.log("Toggling fullscreen mode");
-    setIsFullscreen(!isFullscreen);
+    if (isFullscreen) {
+      setIsExitingFullscreen(true);
+      setTimeout(() => {
+        setIsFullscreen(false);
+        setIsExitingFullscreen(false);
+      }, 300); // 애니메이션 지속 시간과 동일하게 설정
+    } else {
+      setIsFullscreen(true);
+    }
   };
 
   const fetchLyrics = async (
@@ -230,7 +240,22 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     setQueue((prevQueue) => prevQueue.filter((_, i) => i !== index));
   };
 
-  const handleCreatePlaylist = async () => {
+  const handleCreatePlaylistClick = () => {
+    setIsCreatingPlaylist(true);
+  };
+
+  const handlePlaylistNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPlaylistName(event.target.value);
+  };
+
+  const handleCreatePlaylistSubmit = async () => {
+    if (!playlistName) {
+      alert("플레이리스트 이름을 입력하세요.");
+      return;
+    }
+
     try {
       const userResponse = await axios.get("https://api.spotify.com/v1/me", {
         headers: {
@@ -242,8 +267,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       const playlistResponse = await axios.post(
         `https://api.spotify.com/v1/users/${userId}/playlists`,
         {
-          name: "New Playlist",
-          description: "Created with Spotify API",
+          name: playlistName,
           public: false,
         },
         {
@@ -273,6 +297,8 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       }
 
       alert("플레이리스트가 생성되었습니다.");
+      setPlaylistName("");
+      setIsCreatingPlaylist(false);
     } catch (error) {
       console.error("플레이리스트 생성 중 오류가 발생했습니다.", error);
       alert("플레이리스트 생성 중 오류가 발생했습니다.");
@@ -289,7 +315,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
       <div
         className={`${styles.playbackBar} ${
           isFullscreen ? styles.fullscreen : ""
-        }`}
+        } ${isExitingFullscreen ? styles.fullscreenExit : ""}`}
       >
         <div className={styles.controls}>
           {trackId ? (
@@ -433,18 +459,37 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                             </button>
                           </div>
                         ))}
-                        <button
-                          className={styles.createPlaylistButton}
-                          onClick={handleCreatePlaylist}
-                        >
-                          Create Playlist
-                        </button>
+                        {isCreatingPlaylist ? (
+                          <div className={styles.playlistCreation}>
+                            <input
+                              type="text"
+                              value={playlistName}
+                              onChange={handlePlaylistNameChange}
+                              placeholder="플레이리스트 이름을 입력하세요"
+                              className={styles.playlistNameInput}
+                            />
+                            <button
+                              onClick={handleCreatePlaylistSubmit}
+                              className={styles.createPlaylistButton}
+                            >
+                              Create
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            className={styles.createPlaylistButton}
+                            onClick={handleCreatePlaylistClick}
+                          >
+                            Create Playlist
+                          </button>
+                        )}
                       </>
                     ) : (
                       <p>재생 대기 목록이 비어 있습니다.</p>
                     )}
                   </div>
                 )}
+
                 {activeTab === "playlist" && (
                   <Playlist accessToken={accessToken} onSetQueue={setQueue} />
                 )}
