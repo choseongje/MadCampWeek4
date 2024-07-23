@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Player from "../../components/Player";
 import styles from "../../styles/Home.module.css";
+import Image from "next/image";
+import Logo from "../../../public/YaOng4.png";
 
 export default function PlayerPage() {
   const searchParams = useSearchParams();
   const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const token = searchParams.get("access_token");
@@ -37,9 +41,21 @@ export default function PlayerPage() {
     }
   }, [searchParams]);
 
+  const handleLogoClick = () => {
+    router.push("/");
+  };
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.header}>Spotify Visualizer</h1>
+      <Image
+        src={Logo}
+        alt="Logo"
+        className={styles.logo}
+        onClick={handleLogoClick}
+        width={80} // 원하는 width 값 설정
+        height={80} // 원하는 height 값 설정
+      />
+      <h1 className={styles.header}>YaOng Player</h1>
       <div>
         <Player accessToken={accessToken} />
       </div>

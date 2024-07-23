@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import BasicVisualizer from "../../components/BasicVisualizer";
 import CircularVisualizer from "../../components/CircularVisualizer";
 import WaveformVisualizer from "../../components/WaveformVisualizer";
 import RadialVisualizer from "../../components/RadialVisualizer";
-import Login from "../../components/Login";
 import styles from "../../styles/Home.module.css";
+import Image from "next/image";
+import Logo from "../../../public/YaOng4.png";
 
 export default function PlayerPage() {
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -15,6 +16,8 @@ export default function PlayerPage() {
     "basic" | "circular" | "waveform" | "radial"
   >("basic");
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const router = useRouter();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -34,9 +37,21 @@ export default function PlayerPage() {
     setIsPlaying((prev) => !prev);
   };
 
+  const handleLogoClick = () => {
+    router.push("/");
+  };
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.header}>Spotify Visualizer</h1>
+      <Image
+        src={Logo}
+        alt="Logo"
+        className={styles.logo}
+        onClick={handleLogoClick}
+        width={80} // 원하는 width 값 설정
+        height={80} // 원하는 height 값 설정
+      />
+      <h1 className={styles.header}>2D Visualizer</h1>
       <div>
         <input
           type="file"

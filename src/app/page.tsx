@@ -1,14 +1,17 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Login from "../components/Login";
+import Image from "next/image";
+import Logo from "../../public/YaOng4.png";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
   const searchParams = useSearchParams();
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const token = searchParams.get("access_token");
@@ -45,8 +48,20 @@ export default function Home() {
     window.location.reload(); // 페이지를 새로 고쳐 토큰을 완전히 제거합니다
   };
 
+  const handleLogoClick = () => {
+    router.push("/");
+  };
+
   return (
     <div className={styles.container}>
+      <Image
+        src={Logo}
+        alt="Logo"
+        className={styles.logo}
+        onClick={handleLogoClick}
+        width={80} // 원하는 width 값 설정
+        height={80} // 원하는 height 값 설정
+      />
       <h1 className={styles.header}>Spotify Visualizer</h1>
       {!accessToken ? (
         <Login />

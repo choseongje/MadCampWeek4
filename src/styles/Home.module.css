@@ -61,3 +61,15 @@
 .logoutButton:hover {
   background-color: #c9302c;
 }
+
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.1);
+}

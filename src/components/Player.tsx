@@ -349,7 +349,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
               </div>
             </>
           ) : (
-            <div>정보가 없습니다</div>
+            <div>노래를 선택해주세요.</div>
           )}
           <button
             onClick={toggleFullscreen}
@@ -473,7 +473,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
                               onClick={handleCreatePlaylistSubmit}
                               className={styles.createPlaylistButton}
                             >
-                              Create
+                              Create Playlist
                             </button>
                           </div>
                         ) : (
