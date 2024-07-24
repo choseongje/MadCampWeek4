@@ -26,14 +26,14 @@
 }
 
 .quadrant2:hover {
-  background-color: #bc8f8f; /* 호버 시 배경색 변경 */
+  background-color: #ea9a9a; /* 호버 시 배경색 변경 */
 }
 
 .quadrant3:hover {
   background-color: #ff8c00; /* 호버 시 배경색 변경 */
 }
 .quadrant4:hover {
-  background-color: #4682b4; /* 호버 시 배경색 변경 */
+  background-color: #5ca5e0; /* 호버 시 배경색 변경 */
 }
 
 .quadrant:hover .icon {
