@@ -9,25 +9,30 @@
 .header {
   text-align: center;
   margin-bottom: 20px;
-  font-size: 2rem;
+  font-size: 3rem;
   color: #333;
 }
 
 .button {
-  display: block;
-  margin: 0 auto 20px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: #fff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
+  position: absolute; /* 절대 위치로 변경 */
+  top: 20px; /* 상단에서 20px 떨어진 위치 */
+  right: 20px; /* 오른쪽에서 20px 떨어진 위치 */
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  color: #333;
+  background-color: #fffacd; /* 포스트잇 색상 */
+  border: 2px solid #ccc;
+  border-radius: 10px; /* 테두리 둥글게 */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease,
+    transform 0.1s ease;
 }
 
 .button:hover {
-  background-color: #0056b3;
+  background-color: #f0e68c; /* 호버 시 배경색 약간 어둡게 */
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3); /* 호버 시 그림자 효과 강화 */
+  transform: translateY(-3px); /* 호버 시 약간 위로 이동 */
 }
 
 .posts {

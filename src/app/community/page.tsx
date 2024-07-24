@@ -36,7 +36,10 @@ export default function CommunityPage() {
       .catch((error) => console.error("Error fetching posts:", error));
   }, []);
 
-  const handlePostClick = (event: React.MouseEvent<HTMLDivElement>, id: number) => {
+  const handlePostClick = (
+    event: React.MouseEvent<HTMLDivElement>,
+    id: number
+  ) => {
     const element = event.currentTarget as HTMLDivElement;
     const rect = element.getBoundingClientRect();
     const { top, left, width, height } = rect;
@@ -45,24 +48,28 @@ export default function CommunityPage() {
     const clone = element.cloneNode(true) as HTMLDivElement;
 
     // Set the clone's position and dimensions to match the original element
-    clone.style.position = 'absolute';
-    clone.style.top = `${top - element.parentElement!.getBoundingClientRect().top}px`;
-    clone.style.left = `${left - element.parentElement!.getBoundingClientRect().left}px`;
+    clone.style.position = "absolute";
+    clone.style.top = `${
+      top - element.parentElement!.getBoundingClientRect().top
+    }px`;
+    clone.style.left = `${
+      left - element.parentElement!.getBoundingClientRect().left
+    }px`;
     clone.style.width = `${width}px`;
     clone.style.height = `${height}px`;
-    clone.style.margin = '0';
-    clone.style.zIndex = '1000';
+    clone.style.margin = "0";
+    clone.style.zIndex = "1000";
 
     // Add the clone to the parent element
     element.parentElement!.appendChild(clone);
 
     // Apply the animation class to the clone
-    clone.classList.add(styles['fall-away']);
+    clone.classList.add(styles["fall-away"]);
 
     // Make the original element transparent
-    element.classList.add(styles['transparent']);
+    element.classList.add(styles["transparent"]);
 
-    clone.addEventListener('animationend', () => {
+    clone.addEventListener("animationend", () => {
       clone.remove();
       router.push(`/community/${id}`);
     });
@@ -87,7 +94,7 @@ export default function CommunityPage() {
         className={styles.button}
         onClick={() => router.push("/create-post")}
       >
-        게시물 작성하기
+        +
       </button>
       <div className={styles.posts}>
         {posts.map((post) => (
@@ -104,7 +111,7 @@ export default function CommunityPage() {
                   <div
                     key={box.id}
                     className={styles.box}
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
+                    style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}
                   >
                     {box.track && (
                       <div className={styles.trackInfo}>
