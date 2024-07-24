@@ -172,6 +172,14 @@ const ThreeDVisualizer: React.FC = () => {
         // Clean up renderer and context
         renderer.dispose();
         mount.removeChild(renderer.domElement);
+        
+        // Stop the audio context and source if playing
+        if (audioContext && audioContext.state !== 'closed') {
+          audioContext.close();
+        }
+        if (source && isPlaying) {
+          source.stop();
+        }
       };
     }
   }, [audioContext, analyser]);
