@@ -1,8 +1,8 @@
 .container {
   padding: 20px;
-  background-color: #D2B48C; /* 코르크 색 */
+  background-color: #d2b48c; /* 코르크 색 */
   min-height: 100vh;
-  border: 20px solid #2E2E2E; /* 철제 테두리 */
+  border: 20px solid #2e2e2e; /* 철제 테두리 */
   border-radius: 10px; /* 조금 더 부드러운 모서리를 위해 */
 }
 
@@ -41,7 +41,7 @@
 
 .post {
   background-color: #fffacd;
-  border: 1px solid #CCC; /* 철제 테두리 */
+  border: 1px solid #ccc; /* 철제 테두리 */
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -62,11 +62,7 @@
   bottom: 20px;
   left: 20px;
   right: 20px;
-  background: repeating-linear-gradient(
-    white 20px,
-    white 50px,
-    #000 51px
-  );
+  background: repeating-linear-gradient(white 20px, white 50px, #000 51px);
   z-index: 0;
 }
 
@@ -140,6 +136,7 @@
   left: 20px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  border-radius: 30%;
 }
 
 .logo:hover {

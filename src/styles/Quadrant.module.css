@@ -66,6 +66,7 @@
   left: 20px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  border-radius: 30%;
 }
 
 .logo:hover {
