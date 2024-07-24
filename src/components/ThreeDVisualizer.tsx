@@ -181,7 +181,7 @@ const ThreeDVisualizer: React.FC = () => {
       <div className={styles.controls}>
         <div className={styles.fileInputWrapper}>
           <label className={styles.fileInputButton}>
-            {fileName || 'Upload File'}
+            {fileName || 'Choose File'}
             <input
               className={styles.fileInput}
               type="file"
