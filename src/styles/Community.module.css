@@ -149,6 +149,7 @@
   cursor: pointer;
   transition: transform 0.3s ease;
   border-radius: 30%;
+  z-index: 100;
 }
 
 .logo:hover {

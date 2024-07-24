@@ -90,7 +90,7 @@ export default function CommunityPage() {
         height={80} // 원하는 height 값 설정
       />
       <div className={styles.headerContainer}>
-        <h1 className={styles.header}>커뮤니티</h1>
+        <h1 className={styles.header}>Community</h1>
         <button
           className={styles.button}
           onClick={() => router.push("/create-post")}
