@@ -151,14 +151,15 @@
 @keyframes fallAway {
   0% {
     transform: rotateZ(0deg);
-    top: 0;
+    top: var(--initial-top);
+    left: var(--initial-left);
     opacity: 1;
   }
   25% {
     transform: rotateZ(-15deg);
   }
   100% {
-    top: 300px;
+    top: var(--final-top); /* 끝나는 위치를 동적으로 설정 */
     transform: rotateZ(-5deg);
     opacity: 0;
   }
@@ -167,9 +168,13 @@
 .post.fall-away {
   position: absolute;
   animation: fallAway 1s forwards;
-  pointer-events: none; /* Prevent interaction during animation */
+  pointer-events: none; /* 애니메이션 중 상호작용 방지 */
+  --initial-top: initial;
+  --initial-left: initial;
+  --final-top: initial; /* 초기값 설정 */
 }
 
 .post.transparent {
   opacity: 0; /* 포스트잇을 투명하게 설정 */
 }
+
