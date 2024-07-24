@@ -121,7 +121,7 @@ export default function CommunityPage() {
                   >
                     {box.track && (
                       <div className={styles.trackInfo}>
-                        <Image
+                        <img
                           src={box.track.albumImage}
                           alt="Album Cover"
                           className={styles.albumCover}

@@ -7,14 +7,6 @@ import styles from "../styles/Player.module.css";
 
 const spotifyApi = new SpotifyWebApi();
 
-// 전역 타입 선언
-declare global {
-  interface Window {
-    Spotify: any;
-    onSpotifyWebPlaybackSDKReady: (() => void) | undefined;
-  }
-}
-
 const Player = ({ accessToken }: { accessToken: string }) => {
   const [trackId, setTrackId] = useState<string>("");
   const [currentTrackId, setCurrentTrackId] = useState<string>("");

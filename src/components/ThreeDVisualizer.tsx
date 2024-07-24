@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import styles from '../styles/ThreeDVisualizerPage.module.css';
+import React, { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import styles from "../styles/ThreeDVisualizerPage.module.css";
 
 const ThreeDVisualizer: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,8 @@ const ThreeDVisualizer: React.FC = () => {
     const file = event.target.files?.[0];
     if (file) {
       setFileName(file.name);
-      const context = new (window.AudioContext || window.webkitAudioContext)();
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const context = new AudioContext();
       const reader = new FileReader();
 
       reader.onload = () => {
@@ -62,8 +63,10 @@ const ThreeDVisualizer: React.FC = () => {
       } else {
         const newSource = audioContext.createBufferSource();
         newSource.buffer = buffer;
-        newSource.connect(analyser);
-        analyser.connect(audioContext.destination);
+        if (analyser) {
+          newSource.connect(analyser);
+          analyser.connect(audioContext.destination);
+        }
         newSource.start(0, currentTime);
         setSource(newSource);
         setIsPlaying(true);
@@ -78,7 +81,12 @@ const ThreeDVisualizer: React.FC = () => {
       if (!mount) return;
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
       const renderer = new THREE.WebGLRenderer({ antialias: true });
 
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -92,7 +100,14 @@ const ThreeDVisualizer: React.FC = () => {
 
       // 물결파 생성 함수
       const createWave = (height: number) => {
-        const geometry = new THREE.CylinderGeometry(50, 50, height, 64, 1, true);
+        const geometry = new THREE.CylinderGeometry(
+          50,
+          50,
+          height,
+          64,
+          1,
+          true
+        );
         const material = new THREE.ShaderMaterial({
           uniforms: {
             color1: { value: new THREE.Color(0x0000ff) }, // 파란색
@@ -147,7 +162,8 @@ const ThreeDVisualizer: React.FC = () => {
           const frequencyData = dataArray.slice(lowerIndex, upperIndex);
 
           // 주파수 데이터의 평균 세기 계산
-          const avgFrequency = frequencyData.reduce((a, b) => a + b, 0) / frequencyData.length;
+          const avgFrequency =
+            frequencyData.reduce((a, b) => a + b, 0) / frequencyData.length;
 
           // 세기가 역치를 넘으면 새로운 물결파 생성
           if (avgFrequency > THRESHOLD) {
@@ -172,9 +188,9 @@ const ThreeDVisualizer: React.FC = () => {
         // Clean up renderer and context
         renderer.dispose();
         mount.removeChild(renderer.domElement);
-        
+
         // Stop the audio context and source if playing
-        if (audioContext && audioContext.state !== 'closed') {
+        if (audioContext && audioContext.state !== "closed") {
           audioContext.close();
         }
         if (source && isPlaying) {
@@ -189,7 +205,7 @@ const ThreeDVisualizer: React.FC = () => {
       <div className={styles.controls}>
         <div className={styles.fileInputWrapper}>
           <label className={styles.fileInputButton}>
-            {fileName || 'Choose File'}
+            {fileName || "Choose File"}
             <input
               className={styles.fileInput}
               type="file"
@@ -199,7 +215,7 @@ const ThreeDVisualizer: React.FC = () => {
           </label>
         </div>
         <button className={styles.playButton} onClick={togglePlayPause}>
-          {isPlaying ? 'Pause' : 'Play'}
+          {isPlaying ? "Pause" : "Play"}
         </button>
       </div>
       <div className={styles.visualizer} ref={mountRef} />
