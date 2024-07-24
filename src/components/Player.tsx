@@ -7,6 +7,14 @@ import styles from "../styles/Player.module.css";
 
 const spotifyApi = new SpotifyWebApi();
 
+// 전역 타입 선언
+declare global {
+  interface Window {
+    Spotify: any;
+    onSpotifyWebPlaybackSDKReady: (() => void) | undefined;
+  }
+}
+
 const Player = ({ accessToken }: { accessToken: string }) => {
   const [trackId, setTrackId] = useState<string>("");
   const [currentTrackId, setCurrentTrackId] = useState<string>("");
@@ -49,40 +57,58 @@ const Player = ({ accessToken }: { accessToken: string }) => {
 
         window.onSpotifyWebPlaybackSDKReady = () => {
           if (!player) {
-            const newPlayer = new Spotify.Player({
+            const newPlayer = new window.Spotify.Player({
               name: "Web Playback SDK",
-              getOAuthToken: (cb) => {
+              getOAuthToken: (cb: (token: string) => void) => {
                 cb(accessToken);
               },
               volume: 0.5,
             });
 
-            newPlayer.addListener("ready", ({ device_id }) => {
-              console.log("Ready with Device ID", device_id);
-              setDeviceId(device_id);
-            });
+            newPlayer.addListener(
+              "ready",
+              ({ device_id }: { device_id: string }) => {
+                console.log("Ready with Device ID", device_id);
+                setDeviceId(device_id);
+              }
+            );
 
-            newPlayer.addListener("not_ready", ({ device_id }) => {
-              console.log("Device ID has gone offline", device_id);
-            });
+            newPlayer.addListener(
+              "not_ready",
+              ({ device_id }: { device_id: string }) => {
+                console.log("Device ID has gone offline", device_id);
+              }
+            );
 
-            newPlayer.addListener("initialization_error", ({ message }) => {
-              console.error("Failed to initialize", message);
-            });
+            newPlayer.addListener(
+              "initialization_error",
+              ({ message }: { message: string }) => {
+                console.error("Failed to initialize", message);
+              }
+            );
 
-            newPlayer.addListener("authentication_error", ({ message }) => {
-              console.error("Failed to authenticate", message);
-            });
+            newPlayer.addListener(
+              "authentication_error",
+              ({ message }: { message: string }) => {
+                console.error("Failed to authenticate", message);
+              }
+            );
 
-            newPlayer.addListener("account_error", ({ message }) => {
-              console.error("Failed to validate Spotify account", message);
-            });
+            newPlayer.addListener(
+              "account_error",
+              ({ message }: { message: string }) => {
+                console.error("Failed to validate Spotify account", message);
+              }
+            );
 
-            newPlayer.addListener("playback_error", ({ message }) => {
-              console.error("Failed to perform playback", message);
-            });
+            newPlayer.addListener(
+              "playback_error",
+              ({ message }: { message: string }) => {
+                console.error("Failed to perform playback", message);
+              }
+            );
 
-            newPlayer.addListener("player_state_changed", (state) => {
+            newPlayer.addListener("player_state_changed", (state: any) => {
               if (!state) {
                 return;
               }
@@ -111,7 +137,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
         };
       }
     }
-  }, [accessToken]);
+  }, [accessToken, player, currentTrackId]);
 
   useEffect(() => {
     if (accessToken && trackId && deviceId) {
@@ -123,7 +149,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     let interval: NodeJS.Timeout | null = null;
     if (isPlaying && player) {
       interval = setInterval(() => {
-        player.getCurrentState().then((state) => {
+        player.getCurrentState().then((state: any) => {
           if (!state) return;
           setProgress(state.position);
           setDuration(state.duration);
@@ -144,7 +170,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
     if (currentTrackId) {
       fetchLyrics(trackName, artistName, "ko"); // 번역할 언어 설정
     }
-  }, [currentTrackId]);
+  }, [currentTrackId, trackName, artistName]);
 
   const handlePlay = () => {
     if (accessToken && trackId && deviceId) {

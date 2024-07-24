@@ -43,36 +43,37 @@ export default function CommunityPage() {
     const element = event.currentTarget as HTMLDivElement;
     const rect = element.getBoundingClientRect();
     const { top, left, width, height } = rect;
-  
+
     // Create a clone of the element
     const clone = element.cloneNode(true) as HTMLDivElement;
-  
+
     // Set the clone's position and dimensions to match the original element
     clone.style.position = "absolute";
     const cloneTop = top - element.parentElement!.getBoundingClientRect().top;
-    const cloneLeft = left - element.parentElement!.getBoundingClientRect().left;
+    const cloneLeft =
+      left - element.parentElement!.getBoundingClientRect().left;
     clone.style.top = `${cloneTop}px`;
     clone.style.left = `${cloneLeft}px`;
     clone.style.width = `${width}px`;
     clone.style.height = `${height}px`;
     clone.style.margin = "0";
     clone.style.zIndex = "1000";
-  
+
     // Set the CSS variables for the animation
-    clone.style.setProperty('--initial-top', `${cloneTop}px`);
-    clone.style.setProperty('--initial-left', `${cloneLeft}px`);
-    clone.style.setProperty('--final-top', `${cloneTop + 300}px`);
-  
+    clone.style.setProperty("--initial-top", `${cloneTop}px`);
+    clone.style.setProperty("--initial-left", `${cloneLeft}px`);
+    clone.style.setProperty("--final-top", `${cloneTop + 300}px`);
+
     // Add the clone to the parent element
     element.parentElement!.appendChild(clone);
-  
+
     // Apply the animation class to the clone
     clone.classList.add(styles["fall-away"]);
-  
+
     // Make the original element transparent
     element.classList.add(styles["transparent"]);
 
-    clone.addEventListener('animationend', () => {
+    clone.addEventListener("animationend", () => {
       clone.remove();
       router.push(`/community/${id}`);
     });
@@ -120,7 +121,7 @@ export default function CommunityPage() {
                   >
                     {box.track && (
                       <div className={styles.trackInfo}>
-                        <img
+                        <Image
                           src={box.track.albumImage}
                           alt="Album Cover"
                           className={styles.albumCover}

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
-import styles from '../styles/Login.module.css';
+import styles from "../styles/Login.module.css";
 
 const spotifyApi = new SpotifyWebApi();
 
@@ -17,7 +17,7 @@ const Login = () => {
 
     window.location.href = `https://accounts.spotify.com/authorize?response_type=token&client_id=${clientId}&scope=${encodeURIComponent(
       scopes
-    )}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    )}&redirect_uri=${encodeURIComponent(redirectUri ?? "")}`;
   };
 
   const handleLogout = () => {
@@ -27,7 +27,7 @@ const Login = () => {
     window.location.reload();
   };
 
-  const fetchUserProfile = async (accessToken) => {
+  const fetchUserProfile = async (accessToken: string) => {
     spotifyApi.setAccessToken(accessToken);
     try {
       const response = await spotifyApi.getMe();
@@ -40,7 +40,7 @@ const Login = () => {
         email,
         display_name,
         country,
-        followers: followers.total,
+        followers: followers?.total ?? 0,
         profile_image_url: profileImageUrl,
         product,
       });

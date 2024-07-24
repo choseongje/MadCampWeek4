@@ -8,7 +8,7 @@ import DraggableBox from "../../components/DraggableBox";
 import ColorPicker from "../../components/ColorPicker";
 import SearchTrack from "../../components/SearchTrack";
 import styles from "../../styles/CreatePost.module.css";
-import 'react-resizable/css/styles.css'; // 리사이즈 핸들 스타일 포함
+import "react-resizable/css/styles.css"; // 리사이즈 핸들 스타일 포함
 
 interface Box {
   id: number;
@@ -23,6 +23,14 @@ interface Box {
     artistName: string;
     trackName: string;
   };
+}
+
+interface Track {
+  album: {
+    images: { url: string }[];
+  };
+  artists: { name: string }[];
+  name: string;
 }
 
 export default function CreatePostPage() {
@@ -91,9 +99,7 @@ export default function CreatePostPage() {
 
   const moveBox = (id: number, left: number, top: number) => {
     setContent((prevContent) =>
-      prevContent.map((box) =>
-        box.id === id ? { ...box, left, top } : box
-      )
+      prevContent.map((box) => (box.id === id ? { ...box, left, top } : box))
     );
   };
 
@@ -116,7 +122,7 @@ export default function CreatePostPage() {
     }
   };
 
-  const handleTrackSelect = (track) => {
+  const handleTrackSelect = (track: Track) => {
     const newBox = {
       id: Date.now(),
       left: 50,
@@ -136,9 +142,7 @@ export default function CreatePostPage() {
 
   const handleTextChange = (id: number, text: string) => {
     setContent((prevContent) =>
-      prevContent.map((box) =>
-        box.id === id ? { ...box, text } : box
-      )
+      prevContent.map((box) => (box.id === id ? { ...box, text } : box))
     );
   };
 
@@ -157,8 +161,10 @@ export default function CreatePostPage() {
       .catch((error) => console.error("Error generating image:", error));
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
     const formData = new FormData();
     formData.append("image", file);
 
@@ -175,11 +181,16 @@ export default function CreatePostPage() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={styles.container} style={{ backgroundImage: `url(${backgroundImage})` }}>
+      <div
+        className={styles.container}
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
         <h1 className={styles.header}>게시물 작성</h1>
         <div>
           <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="title">제목</label>
+            <label className={styles.label} htmlFor="title">
+              제목
+            </label>
             <input
               className={styles.input}
               type="text"
@@ -189,10 +200,14 @@ export default function CreatePostPage() {
               required
             />
           </div>
-          <button type="button" className={styles.button} onClick={addBox}>글 상자 추가</button>
+          <button type="button" className={styles.button} onClick={addBox}>
+            글 상자 추가
+          </button>
           {selectedBox && <ColorPicker onChange={changeColor} />}
           <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="backgroundDescription">배경 묘사</label>
+            <label className={styles.label} htmlFor="backgroundDescription">
+              배경 묘사
+            </label>
             <input
               className={styles.input}
               type="text"
@@ -200,10 +215,18 @@ export default function CreatePostPage() {
               value={backgroundDescription}
               onChange={(e) => setBackgroundDescription(e.target.value)}
             />
-            <button type="button" className={styles.button} onClick={generateBackground}>배경 생성</button>
+            <button
+              type="button"
+              className={styles.button}
+              onClick={generateBackground}
+            >
+              배경 생성
+            </button>
           </div>
           <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="backgroundImage">배경 이미지 업로드</label>
+            <label className={styles.label} htmlFor="backgroundImage">
+              배경 이미지 업로드
+            </label>
             <input
               className={styles.input}
               type="file"
@@ -212,10 +235,7 @@ export default function CreatePostPage() {
               onChange={handleImageUpload}
             />
           </div>
-          <div
-            className={styles.board}
-            ref={boardRef}
-          >
+          <div className={styles.board} ref={boardRef}>
             {content.map((box) => (
               <DraggableBox
                 key={box.id}
@@ -227,10 +247,19 @@ export default function CreatePostPage() {
               />
             ))}
           </div>
-          <button type="button" className={styles.submitButton} onClick={handleSubmit}>작성하기</button>
+          <button
+            type="button"
+            className={styles.submitButton}
+            onClick={handleSubmit}
+          >
+            작성하기
+          </button>
         </div>
         {accessToken ? (
-          <SearchTrack accessToken={accessToken} onTrackSelect={handleTrackSelect} />
+          <SearchTrack
+            accessToken={accessToken}
+            onTrackSelect={handleTrackSelect}
+          />
         ) : (
           <p>Loading...</p>
         )}

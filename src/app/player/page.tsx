@@ -57,7 +57,7 @@ export default function PlayerPage() {
       />
       <h1 className={styles.header}>YaOng Player</h1>
       <div>
-        <Player accessToken={accessToken} />
+        <Player accessToken={accessToken ?? ""} />
       </div>
     </div>
   );
