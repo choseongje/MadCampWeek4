@@ -9,37 +9,53 @@
 }
 
 .quadrant {
-  flex: 1 0 50%; /* 화면을 4분할 */
+  flex: 1 0 45%; /* 화면을 4분할, 여유 공간 확보를 위해 조정 */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  margin: 10px; /* 각 quadrant마다 margin을 추가 */
+  border-radius: 10px; /* 테두리 둥글게 */
+  background-color: #1c1c1c; /* 기본 배경색 설정 */
 }
 
 .quadrant1:hover {
-  background-color: rgba(0, 255, 0, 0.5); /* 호버 시 배경색 변경 */
+  background-color: #32cd32; /* 호버 시 배경색 변경 */
+}
+
+.quadrant1:hover .quadrantText {
+  color: #000; /* 호버 시 글자 색 변경 */
 }
 
 .quadrant2:hover {
-  background-color: #d2b48c; /* 호버 시 배경색 변경 */
+  background-color: #bc8f8f; /* 호버 시 배경색 변경 */
 }
 
 .quadrant2:hover .quadrantText {
-  color: #333; /* 호버 시 글자 색 변경 */
+  color: #000; /* 호버 시 글자 색 변경 */
 }
 
 .quadrant3:hover {
-  background-color: rgba(0, 0, 255, 0.5); /* 호버 시 배경색 변경 */
+  background-color: #ff8c00; /* 호버 시 배경색 변경 */
+}
+
+.quadrant3:hover .quadrantText {
+  color: #000; /* 호버 시 글자 색 변경 */
 }
 
 .quadrant4:hover {
-  background-color: rgba(255, 255, 0, 0.5); /* 호버 시 배경색 변경 */
+  background-color: #4682b4; /* 호버 시 배경색 변경 */
+}
+
+.quadrant4:hover .quadrantText {
+  color: #000; /* 호버 시 글자 색 변경 */
 }
 
 .quadrantText {
   font-size: 2rem;
   color: white;
+  transition: color 0.3s ease-in-out;
 }
 
 .logoutButton {
