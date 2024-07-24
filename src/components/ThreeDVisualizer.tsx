@@ -3,11 +3,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import styles from '../styles/ThreeDVisualizerPage.module.css';
 
 const ThreeDVisualizer: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const [source, setSource] = useState<AudioBufferSourceNode | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [buffer, setBuffer] = useState<AudioBuffer | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const wavesRef = useRef<THREE.Mesh[]>([]);
 
   const THRESHOLD = 150; // 세기 역치
@@ -17,28 +23,51 @@ const ThreeDVisualizer: React.FC = () => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setFileName(file.name);
       const context = new (window.AudioContext || window.webkitAudioContext)();
       const reader = new FileReader();
 
       reader.onload = () => {
         const arrayBuffer = reader.result as ArrayBuffer;
         context.decodeAudioData(arrayBuffer, (buffer) => {
-          const source = context.createBufferSource();
-          source.buffer = buffer;
+          setBuffer(buffer);
+          const audioSource = context.createBufferSource();
+          audioSource.buffer = buffer;
 
           const analyserNode = context.createAnalyser();
           analyserNode.fftSize = 32768; // 큰 fftSize로 설정
 
-          source.connect(analyserNode);
+          audioSource.connect(analyserNode);
           analyserNode.connect(context.destination);
-          source.start();
 
           setAudioContext(context);
           setAnalyser(analyserNode);
+          setSource(audioSource);
         });
       };
 
       reader.readAsArrayBuffer(file);
+    }
+  };
+
+  // 오디오 재생 및 중지 토글 함수
+  const togglePlayPause = () => {
+    if (audioContext && buffer) {
+      if (isPlaying) {
+        if (source) {
+          source.stop();
+          setCurrentTime(audioContext.currentTime - currentTime);
+        }
+        setIsPlaying(false);
+      } else {
+        const newSource = audioContext.createBufferSource();
+        newSource.buffer = buffer;
+        newSource.connect(analyser);
+        analyser.connect(audioContext.destination);
+        newSource.start(0, currentTime);
+        setSource(newSource);
+        setIsPlaying(true);
+      }
     }
   };
 
@@ -58,7 +87,7 @@ const ThreeDVisualizer: React.FC = () => {
       const controls = new OrbitControls(camera, renderer.domElement);
 
       // 카메라 초기 위치 설정
-      camera.position.set(0, 100, 250);
+      camera.position.set(0, 150, 250);
       camera.lookAt(0, 0, 0);
 
       // 물결파 생성 함수
@@ -148,9 +177,24 @@ const ThreeDVisualizer: React.FC = () => {
   }, [audioContext, analyser]);
 
   return (
-    <div>
-      <input type="file" accept="audio/mp3" onChange={handleFileUpload} />
-      <div ref={mountRef} />
+    <div className={styles.container}>
+      <div className={styles.controls}>
+        <div className={styles.fileInputWrapper}>
+          <label className={styles.fileInputButton}>
+            {fileName || 'Upload File'}
+            <input
+              className={styles.fileInput}
+              type="file"
+              accept="audio/mp3"
+              onChange={handleFileUpload}
+            />
+          </label>
+        </div>
+        <button className={styles.playButton} onClick={togglePlayPause}>
+          {isPlaying ? 'Pause' : 'Play'}
+        </button>
+      </div>
+      <div className={styles.visualizer} ref={mountRef} />
     </div>
   );
 };

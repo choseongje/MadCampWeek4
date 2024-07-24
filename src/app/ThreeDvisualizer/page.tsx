@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ThreeDVisualizer from '../../components/ThreeDVisualizer';
-import styles from '../../styles/Home.module.css';
+import styles from '../../styles/ThreeDVisualizerPage.module.css';
 
 const ThreeDVisualizerPage: React.FC = () => {
   return (
