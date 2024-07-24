@@ -49,7 +49,7 @@ const PostDetail: React.FC = () => {
 
   const backgroundStyle = post.backgroundImage
     ? { backgroundImage: `url(${post.backgroundImage})` }
-    : { backgroundColor: '#fffacd' }; // 기본 배경 설정
+    : { backgroundColor: "#fffacd" }; // 기본 배경 설정
 
   return (
     <DndProvider backend={HTML5Backend}>
