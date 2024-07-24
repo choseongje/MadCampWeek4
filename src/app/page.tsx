@@ -64,25 +64,25 @@ export default function Home() {
             로그아웃
           </button>
           <div
-            className={Styles.quadrant}
+            className={`${Styles.quadrant} ${Styles.quadrant1}`}
             onClick={() => router.push("/player")}
           >
             <div className={Styles.quadrantText}>플레이어</div>
           </div>
           <div
-            className={Styles.quadrant}
+            className={`${Styles.quadrant} ${Styles.quadrant2}`}
             onClick={() => router.push("/community")}
           >
             <div className={Styles.quadrantText}>커뮤니티</div>
           </div>
           <div
-            className={Styles.quadrant}
+            className={`${Styles.quadrant} ${Styles.quadrant3}`}
             onClick={() => router.push("/visualizer")}
           >
             <div className={Styles.quadrantText}>2D 비주얼라이저</div>
           </div>
           <div
-            className={Styles.quadrant}
+            className={`${Styles.quadrant} ${Styles.quadrant4}`}
             onClick={() => router.push("/ThreeDvisualizer")}
           >
             <div className={Styles.quadrantText}>3D 비주얼라이저</div>
