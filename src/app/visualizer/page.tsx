@@ -1,12 +1,12 @@
-"use client";
+"use client"; // 이 지시문을 추가합니다.
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import BasicVisualizer from "../../components/BasicVisualizer";
 import CircularVisualizer from "../../components/CircularVisualizer";
 import WaveformVisualizer from "../../components/WaveformVisualizer";
 import RadialVisualizer from "../../components/RadialVisualizer";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/Visualizerpage.module.css";
 import Image from "next/image";
 import Logo from "../../../public/YaOng4.png";
 
@@ -16,12 +16,14 @@ export default function PlayerPage() {
     "basic" | "circular" | "waveform" | "radial"
   >("basic");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [fileName, setFileName] = useState("Choose File");
 
   const router = useRouter();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setAudioFile(event.target.files[0]);
+      setFileName(event.target.files[0].name);
     }
   };
 
@@ -48,17 +50,21 @@ export default function PlayerPage() {
         alt="Logo"
         className={styles.logo}
         onClick={handleLogoClick}
-        width={80} // 원하는 width 값 설정
-        height={80} // 원하는 height 값 설정
+        width={80}
+        height={80}
       />
       <h1 className={styles.header}>2D Visualizer</h1>
-      <div>
-        <input
-          type="file"
-          accept="audio/*"
-          onChange={handleFileChange}
-          className={styles.fileInput}
-        />
+      <div className={styles.controls}>
+        <div className={styles.fileInputWrapper}>
+          <label htmlFor="fileInput" className={styles.fileInputButton}>{fileName}</label>
+          <input
+            id="fileInput"
+            type="file"
+            accept="audio/*"
+            onChange={handleFileChange}
+            className={styles.fileInput}
+          />
+        </div>
         <select
           onChange={handleVisualizerChange}
           value={visualizerType}
@@ -69,35 +75,35 @@ export default function PlayerPage() {
           <option value="waveform">Waveform Visualizer</option>
           <option value="radial">Radial Visualizer</option>
         </select>
-        {audioFile && visualizerType === "basic" && (
-          <BasicVisualizer
-            audioFile={audioFile}
-            isPlaying={isPlaying}
-            onPlayPause={handlePlayPause}
-          />
-        )}
-        {audioFile && visualizerType === "circular" && (
-          <CircularVisualizer
-            audioFile={audioFile}
-            isPlaying={isPlaying}
-            onPlayPause={handlePlayPause}
-          />
-        )}
-        {audioFile && visualizerType === "waveform" && (
-          <WaveformVisualizer
-            audioFile={audioFile}
-            isPlaying={isPlaying}
-            onPlayPause={handlePlayPause}
-          />
-        )}
-        {audioFile && visualizerType === "radial" && (
-          <RadialVisualizer
-            audioFile={audioFile}
-            isPlaying={isPlaying}
-            onPlayPause={handlePlayPause}
-          />
-        )}
       </div>
+      {audioFile && visualizerType === "basic" && (
+        <BasicVisualizer
+          audioFile={audioFile}
+          isPlaying={isPlaying}
+          onPlayPause={handlePlayPause}
+        />
+      )}
+      {audioFile && visualizerType === "circular" && (
+        <CircularVisualizer
+          audioFile={audioFile}
+          isPlaying={isPlaying}
+          onPlayPause={handlePlayPause}
+        />
+      )}
+      {audioFile && visualizerType === "waveform" && (
+        <WaveformVisualizer
+          audioFile={audioFile}
+          isPlaying={isPlaying}
+          onPlayPause={handlePlayPause}
+        />
+      )}
+      {audioFile && visualizerType === "radial" && (
+        <RadialVisualizer
+          audioFile={audioFile}
+          isPlaying={isPlaying}
+          onPlayPause={handlePlayPause}
+        />
+      )}
     </div>
   );
 }

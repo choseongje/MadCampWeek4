@@ -1,0 +1,112 @@
+/* Visualizerpage.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 0 2rem;
+    background-color: #000;
+  }
+  
+  .logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo:hover {
+    transform: scale(1.1);
+  }
+  
+  .header {
+    font-size: 2rem;
+    margin: 20px 0;
+    color: #fff;
+  }
+  
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 간격 추가 */
+  }
+  
+  /* 커스텀 파일 입력 스타일 */
+  .fileInputWrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .fileInputButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    background-color: #444;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+  }
+  
+  .fileInputButton:hover {
+    background-color: #555;
+    transform: scale(1.05);
+  }
+  
+  .fileInputButton:focus {
+    outline: none;
+    box-shadow: 0 0 10px #719ece;
+  }
+  
+  .fileInput {
+    display: none; /* 파일 입력 요소 숨김 */
+  }
+  
+  .select {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    background-color: #444;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .select:hover {
+    background-color: #555;
+    transform: scale(1.05);
+  }
+  
+  .select:focus {
+    outline: none;
+    box-shadow: 0 0 10px #719ece;
+  }
+  
+  /* 공통 버튼 스타일 */
+  .button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    background-color: #444;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    margin: 10px 0;
+  }
+  
+  .button:hover {
+    background-color: #555;
+    transform: scale(1.05);
+  }
+  
+  .button:focus {
+    outline: none;
+    box-shadow: 0 0 10px #719ece;
+  }
+  
