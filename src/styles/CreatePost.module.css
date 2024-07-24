@@ -2,14 +2,15 @@
   padding: 20px;
   background-size: cover;
   background-position: center;
+  background-color: #fffacd;
   min-height: 100vh;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 20px;
+  margin: 0;
+  font-size: 3rem;
+  color: #333;
 }
-
 .formGroup {
   margin-bottom: 15px;
 }
@@ -17,6 +18,7 @@
 .label {
   display: block;
   margin-bottom: 5px;
+  color: #333;
 }
 
 .input,
@@ -24,6 +26,7 @@
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+  color: #333;
 }
 
 .button,
