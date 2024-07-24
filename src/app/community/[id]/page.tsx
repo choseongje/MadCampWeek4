@@ -47,10 +47,14 @@ const PostDetail: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  const backgroundStyle = post.backgroundImage
+    ? { backgroundImage: `url(${post.backgroundImage})` }
+    : { backgroundColor: '#fffacd' }; // 기본 배경 설정
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={styles.container} style={{ backgroundImage: `url(${post.backgroundImage})` }}>
-        <h1>{post.title}</h1>
+      <div className={styles.container} style={backgroundStyle}>
+        <h1 className={styles.title}>{post.title}</h1>
         <div className={styles.board}>
           {post.content.map((box) => (
             <DraggableBox

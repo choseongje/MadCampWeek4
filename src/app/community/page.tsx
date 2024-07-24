@@ -36,8 +36,36 @@ export default function CommunityPage() {
       .catch((error) => console.error("Error fetching posts:", error));
   }, []);
 
-  const handlePostClick = (id: number) => {
-    router.push(`/community/${id}`);
+  const handlePostClick = (event: React.MouseEvent<HTMLDivElement>, id: number) => {
+    const element = event.currentTarget as HTMLDivElement;
+    const rect = element.getBoundingClientRect();
+    const { top, left, width, height } = rect;
+
+    // Create a clone of the element
+    const clone = element.cloneNode(true) as HTMLDivElement;
+
+    // Set the clone's position and dimensions to match the original element
+    clone.style.position = 'absolute';
+    clone.style.top = `${top - element.parentElement!.getBoundingClientRect().top}px`;
+    clone.style.left = `${left - element.parentElement!.getBoundingClientRect().left}px`;
+    clone.style.width = `${width}px`;
+    clone.style.height = `${height}px`;
+    clone.style.margin = '0';
+    clone.style.zIndex = '1000';
+
+    // Add the clone to the parent element
+    element.parentElement!.appendChild(clone);
+
+    // Apply the animation class to the clone
+    clone.classList.add(styles['fall-away']);
+
+    // Make the original element transparent
+    element.classList.add(styles['transparent']);
+
+    clone.addEventListener('animationend', () => {
+      clone.remove();
+      router.push(`/community/${id}`);
+    });
   };
 
   const handleLogoClick = () => {
@@ -66,7 +94,7 @@ export default function CommunityPage() {
           <div
             key={post.id}
             className={styles.post}
-            onClick={() => handlePostClick(post.id)}
+            onClick={(event) => handlePostClick(event, post.id)}
           >
             <h2 className={styles.postTitle}>{post.title}</h2>
             <div className={styles.postContent}>
