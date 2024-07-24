@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SpotifyWebApi from "spotify-web-api-js";
 import axios from "axios";
+import styles from '../styles/Login.module.css';
 
 const spotifyApi = new SpotifyWebApi();
 
@@ -23,10 +24,10 @@ const Login = () => {
     localStorage.removeItem("spotify_access_token");
     localStorage.removeItem("spotify_token_expires_in");
     router.push("/");
-    window.location.reload(); // 페이지를 새로 고쳐 토큰을 완전히 제거합니다
+    window.location.reload();
   };
 
-  const fetchUserProfile = async (accessToken: string) => {
+  const fetchUserProfile = async (accessToken) => {
     spotifyApi.setAccessToken(accessToken);
     try {
       const response = await spotifyApi.getMe();
@@ -44,7 +45,7 @@ const Login = () => {
         product,
       });
       console.log("User profile saved:", response);
-      router.push("/"); // 로그인 후 리디렉션합니다
+      router.push("/");
     } catch (error) {
       console.error("Error fetching user profile", error);
     }
@@ -85,9 +86,11 @@ const Login = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Please login to continue</h2>
-      <button onClick={handleLogin}>Login with Spotify</button>
+    <div className={styles.container}>
+      <h2 className={styles.title}>Please login to continue</h2>
+      <button className={styles.button} onClick={handleLogin}>
+        Login with Spotify
+      </button>
     </div>
   );
 };

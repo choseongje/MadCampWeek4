@@ -76,7 +76,7 @@ export default function CommunityPage() {
                   <div
                     key={box.id}
                     className={styles.box}
-                    style={{ backgroundColor: box.color }}
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
                   >
                     {box.track && (
                       <div className={styles.trackInfo}>
