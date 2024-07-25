@@ -105,6 +105,11 @@ const DraggableBox: React.FC<DraggableBoxProps> = ({
             height: "100%",
             cursor: isDraggable ? "move" : "default",
             opacity: isDragging ? 0.5 : 1,
+            display: 'flex', /* Flexbox를 사용하여 가운데 정렬 설정 */
+            flexDirection: 'column', /* 요소들을 세로로 정렬 */
+            alignItems: 'center', /* 세로 가운데 정렬 */
+            justifyContent: 'center', /* 가로 가운데 정렬 */
+            textAlign: 'center', /* 텍스트 가운데 정렬 */
           }}
           className={styles.draggableBox}
           onClick={onClick}
@@ -114,9 +119,9 @@ const DraggableBox: React.FC<DraggableBoxProps> = ({
         >
           {track ? (
             <>
-              <img src={track.albumImage} alt={track.trackName} width="50" />
-              <div>{track.trackName}</div>
-              <div>{track.artistName}</div>
+              <img src={track.albumImage} alt={track.trackName} className={styles.albumCover} />
+              <div className={styles.trackInfo}>{track.trackName}</div>
+              <div className={styles.trackInfo}>{track.artistName}</div>
             </>
           ) : (
             text

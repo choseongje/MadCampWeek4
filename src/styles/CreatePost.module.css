@@ -7,12 +7,35 @@
 }
 
 .header {
-  margin: 0;
+  margin: 0 auto 20px auto; /* 가로 기준 가운데 정렬 및 하단에 20px 간격 추가 */
   font-size: 3rem;
   color: #333;
+  background-color: rgba(255, 255, 255, 0.4); /* 흰색 배경 및 투명도 설정 */
+  width: 30%; /* 전체 가로 길이의 40% 차지 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  padding: 5px; /* 헤더 내부 여백 추가 */
+  border-radius: 10px; /* 모서리 둥글게 */
 }
+
 .formGroup {
   margin-bottom: 15px;
+  width: 100%; /* 입력 필드의 너비를 줄임 */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center; /* 중앙 정렬 */
+}
+
+.formRowContainer {
+  display: flex;
+  justify-content: center; /* 가로 기준 가운데 정렬 */
+  margin-bottom: 15px;
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 버튼 간격 조절 */
+  width: 70vw; /* 보드와 동일한 너비 설정 */
 }
 
 .label {
@@ -23,28 +46,72 @@
 
 .input,
 .textarea {
-  width: 100%;
-  padding: 8px;
+  flex: 1; /* 남은 공간을 차지하도록 설정 */
+  padding: 10px;
   box-sizing: border-box;
   color: #333;
+  border: 2px solid #ccc; /* 테두리 추가 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  background-color: #f9f9f9; /* 배경색 추가 */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 내부 그림자 효과 */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 부드러운 애니메이션 효과 */
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #4CAF50; /* 포커스 시 테두리 색상 */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* 포커스 시 그림자 효과 */
+  outline: none; /* 기본 포커스 스타일 제거 */
 }
 
 .button,
-.submitButton {
-  display: block;
-  margin: 10px auto;
+.submitButton,
+.imageButton,
+.musicButton,
+.fileLabel {
+  display: inline-block;
   padding: 10px 20px;
   cursor: pointer;
+  background-color: #4CAF50; /* 녹색 배경 */
+  color: white; /* 흰색 텍스트 */
+  border: none; /* 테두리 제거 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  box-shadow: 0 4px #999; /* 그림자 효과 */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* 부드러운 애니메이션 효과 */
+  font-size: 1rem;
+  min-width: 50px; /* 버튼의 최소 너비 설정 */
+}
+
+.button:hover,
+.submitButton:hover,
+.imageButton:hover,
+.musicButton:hover,
+.fileLabel:hover {
+  background-color: #45a049; /* 호버 시 약간 더 어두운 녹색 */
+}
+
+.button:active,
+.submitButton:active,
+.imageButton:active,
+.musicButton:active,
+.fileLabel:active {
+  background-color: #45a049; /* 클릭 시 같은 색상 유지 */
+  box-shadow: 0 2px #666; /* 그림자 줄임 */
+  transform: translateY(2px); /* 약간 아래로 이동 */
+}
+
+.fileInput {
+  display: none; /* 파일 입력 필드를 숨김 */
 }
 
 .board {
   position: relative;
   width: 70vw;
-  height: 50vh;
+  height: 70vh;
   border: 1px solid #ccc;
   margin: 20px auto;
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.8); /* 흰색 배경 및 투명도 설정 */
+  background-color: rgba(255, 255, 255, 0.4); /* 흰색 배경 및 투명도 설정 */
 }
 
 .draggableBox {
@@ -53,4 +120,81 @@
   cursor: move;
   position: absolute;
   overflow: auto;
+  color: black;
+  display: flex; /* Flexbox를 사용하여 가운데 정렬 설정 */
+  flex-direction: column; /* 요소들을 세로로 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
+  justify-content: center; /* 가로 가운데 정렬 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+.draggableBox img {
+  max-width: 70%;
+  max-height: 70%;
+  width: auto;
+  height: auto;
+  margin-bottom: 10px; /* 이미지와 텍스트 사이 간격 추가 */
+}
+
+.draggableBox .text {
+  margin-top: 10px; /* 이미지와 텍스트 사이 간격 추가 */
+}
+
+.draggableBox .trackInfo {
+  font-size: 1.3rem;
+  margin-bottom: 5px; /* 글과 글 사이 간격 추가 */
+}
+
+.modal {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+}
+
+.modalContent {
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 5px; /* 모서리 둥글게 */
+}
+
+.modalContent h2 {
+  color: black; /* 텍스트 색상을 검정으로 변경 */
+}
+
+.textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  box-sizing: border-box;
+  color: #333;
+  border: 2px solid #ccc; /* 테두리 추가 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  background-color: #f9f9f9; /* 배경색 추가 */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 내부 그림자 효과 */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 부드러운 애니메이션 효과 */
+  resize: none; /* 크기 조절 불가 */
+}
+
+.closeButton {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.closeButton:hover,
+.closeButton:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
