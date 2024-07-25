@@ -30,7 +30,7 @@ export default function CommunityPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("http://35.208.81.161:3000/posts")
+    fetch("https://35.208.81.161:3000/posts")
       .then((response) => response.json())
       .then((data) => setPosts(data))
       .catch((error) => console.error("Error fetching posts:", error));

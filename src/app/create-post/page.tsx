@@ -79,7 +79,7 @@ const CreatePostPage: React.FC = () => {
 
     console.log("Submitting post:", post); // 디버그 용도로 추가
 
-    fetch("http://35.208.81.161:3000/posts", {
+    fetch("https://35.208.81.161:3000/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -174,7 +174,7 @@ const CreatePostPage: React.FC = () => {
   };
 
   const generateBackground = () => {
-    fetch("http://35.208.81.161:3000/generate-image", {
+    fetch("https//35.208.81.161:3000/generate-image", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -183,7 +183,7 @@ const CreatePostPage: React.FC = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setBackgroundImage(`http://35.208.81.161:3000/${data.imageUrl}`);
+        setBackgroundImage(`https://35.208.81.161:3000/${data.imageUrl}`);
         closeBackgroundModal();
       })
       .catch((error) => console.error("Error generating image:", error));
@@ -196,13 +196,13 @@ const CreatePostPage: React.FC = () => {
     const formData = new FormData();
     formData.append("image", file);
 
-    fetch("http://35.208.81.161:3000/upload-image", {
+    fetch("https://35.208.81.161:3000/upload-image", {
       method: "POST",
       body: formData,
     })
       .then((response) => response.json())
       .then((data) => {
-        setBackgroundImage(`http://35.208.81.161:3000/${data.imageUrl}`);
+        setBackgroundImage(`https://35.208.81.161:3000/${data.imageUrl}`);
       })
       .catch((error) => console.error("Error uploading image:", error));
   };

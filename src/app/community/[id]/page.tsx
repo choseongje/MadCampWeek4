@@ -36,7 +36,7 @@ const PostDetail: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      fetch(`http://35.208.81.161:3000/posts/${id}`)
+      fetch(`https://35.208.81.161:3000/posts/${id}`)
         .then((response) => response.json())
         .then((data) => setPost(data))
         .catch((error) => console.error("Error fetching post:", error));
