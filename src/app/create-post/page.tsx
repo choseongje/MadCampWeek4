@@ -33,7 +33,15 @@ interface Track {
   name: string;
 }
 
-export default function CreatePostPage() {
+interface Track {
+  album: {
+    images: { url: string }[];
+  };
+  artists: { name: string }[];
+  name: string;
+}
+
+const CreatePostPage: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState<Box[]>([]);
   const [selectedBox, setSelectedBox] = useState<number | null>(null);
@@ -41,6 +49,8 @@ export default function CreatePostPage() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [backgroundDescription, setBackgroundDescription] = useState("");
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [isBackgroundModalOpen, setIsBackgroundModalOpen] = useState(false);
+  const [isMusicModalOpen, setIsMusicModalOpen] = useState(false);
   const boardRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
@@ -138,12 +148,29 @@ export default function CreatePostPage() {
     };
     setContent((prevContent) => [...prevContent, newBox]);
     setSelectedBox(newBox.id);
+    closeMusicModal();
   };
 
   const handleTextChange = (id: number, text: string) => {
     setContent((prevContent) =>
       prevContent.map((box) => (box.id === id ? { ...box, text } : box))
     );
+  };
+
+  const openBackgroundModal = () => {
+    setIsBackgroundModalOpen(true);
+  };
+
+  const closeBackgroundModal = () => {
+    setIsBackgroundModalOpen(false);
+  };
+
+  const openMusicModal = () => {
+    setIsMusicModalOpen(true);
+  };
+
+  const closeMusicModal = () => {
+    setIsMusicModalOpen(false);
   };
 
   const generateBackground = () => {
@@ -157,6 +184,7 @@ export default function CreatePostPage() {
       .then((response) => response.json())
       .then((data) => {
         setBackgroundImage(`http://172.10.7.88:80/${data.imageUrl}`);
+        closeBackgroundModal();
       })
       .catch((error) => console.error("Error generating image:", error));
   };
@@ -185,85 +213,118 @@ export default function CreatePostPage() {
         className={styles.container}
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <h1 className={styles.header}>게시물 작성</h1>
-        <div>
-          <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="title">
-              제목
-            </label>
+        <h1 className={styles.header}>추억 남기기</h1>
+        <div className={styles.formRowContainer}>
+          <div className={styles.formRow}>
             <input
               className={styles.input}
               type="text"
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목을 입력하세요"
               required
             />
-          </div>
-          <button type="button" className={styles.button} onClick={addBox}>
-            글 상자 추가
-          </button>
-          {selectedBox && <ColorPicker onChange={changeColor} />}
-          <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="backgroundDescription">
-              배경 묘사
-            </label>
-            <input
-              className={styles.input}
-              type="text"
-              id="backgroundDescription"
-              value={backgroundDescription}
-              onChange={(e) => setBackgroundDescription(e.target.value)}
-            />
+            <button type="button" className={styles.button} onClick={addBox}>
+              ✏️
+            </button>
             <button
               type="button"
-              className={styles.button}
-              onClick={generateBackground}
+              className={styles.musicButton}
+              onClick={openMusicModal}
             >
-              배경 생성
+              🎶
             </button>
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="backgroundImage">
-              배경 이미지 업로드
-            </label>
+            <ColorPicker onChange={changeColor} />
+            <button
+              type="button"
+              className={styles.imageButton}
+              onClick={openBackgroundModal}
+            >
+              🖼️
+            </button>
             <input
-              className={styles.input}
+              className={styles.fileInput}
               type="file"
               id="backgroundImage"
               accept="image/*"
               onChange={handleImageUpload}
             />
+            <label className={styles.fileLabel} htmlFor="backgroundImage">
+              📂
+            </label>
           </div>
-          <div className={styles.board} ref={boardRef}>
-            {content.map((box) => (
-              <DraggableBox
-                key={box.id}
-                {...box}
-                onMove={moveBox}
-                onResize={resizeBox}
-                onClick={() => setSelectedBox(box.id)}
-                onTextChange={handleTextChange}
-              />
-            ))}
-          </div>
-          <button
-            type="button"
-            className={styles.submitButton}
-            onClick={handleSubmit}
-          >
-            작성하기
-          </button>
         </div>
-        {accessToken ? (
-          <SearchTrack
-            accessToken={accessToken}
-            onTrackSelect={handleTrackSelect}
-          />
-        ) : (
-          <p>Loading...</p>
+        <div className={styles.board} ref={boardRef}>
+          {content.map((box) => (
+            <DraggableBox
+              key={box.id}
+              {...box}
+              onMove={moveBox}
+              onResize={resizeBox}
+              onClick={() => setSelectedBox(box.id)}
+              onTextChange={handleTextChange}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          className={styles.submitButton}
+          onClick={handleSubmit}
+        >
+          작성하기
+        </button>
+
+        {isBackgroundModalOpen && (
+          <div className={styles.modal}>
+            <div className={styles.modalContent}>
+              <span
+                className={styles.closeButton}
+                onClick={closeBackgroundModal}
+              >
+                &times;
+              </span>
+              <h2>배경 묘사 입력</h2>
+              <textarea
+                className={styles.textarea}
+                value={backgroundDescription}
+                onChange={(e) => setBackgroundDescription(e.target.value)}
+              />
+              <button
+                type="button"
+                className={styles.button}
+                onClick={() => {
+                  generateBackground();
+                  closeBackgroundModal();
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        )}
+
+        {isMusicModalOpen && (
+          <div className={styles.modal}>
+            <div className={styles.modalContent}>
+              <span className={styles.closeButton} onClick={closeMusicModal}>
+                &times;
+              </span>
+              <h2>음악 검색</h2>
+              {accessToken ? (
+                <SearchTrack
+                  accessToken={accessToken}
+                  onTrackSelect={handleTrackSelect}
+                />
+              ) : (
+                <p>Loading...</p>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </DndProvider>
   );
-}
+};
+
+export default CreatePostPage;
