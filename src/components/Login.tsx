@@ -35,7 +35,7 @@ const Login = () => {
         response;
       const profileImageUrl =
         images && images.length > 0 ? images[0].url : null;
-      await axios.post("http://172.10.7.88:80/saveUser", {
+      await axios.post("http://35.208.81.161:3000/saveUser", {
         id,
         email,
         display_name,

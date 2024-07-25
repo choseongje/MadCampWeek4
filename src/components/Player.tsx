@@ -227,7 +227,7 @@ const Player = ({ accessToken }: { accessToken: string }) => {
   ) => {
     console.log("Fetching lyrics for:", trackName, artistName);
     try {
-      const response = await axios.get("http://172.10.7.88:80/lyrics", {
+      const response = await axios.get("http://35.208.81.161:3000/lyrics", {
         params: {
           track: trackName,
           artist: artistName,
