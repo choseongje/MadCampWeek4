@@ -40,8 +40,7 @@ YaOng 4는 스포티파이 뮤직 플레이어, 커뮤니티, 비주얼라이저
 
 - 메인 화면
 
-
-Uploading 화면 기록 2024-07-25 오후 4.24.59.mov…
+https://github.com/user-attachments/assets/33a61087-5304-4ef7-a74b-e08083ce4f58
 
 
 ## Player
