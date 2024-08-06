@@ -1,3 +1,7 @@
+# Notion Link
+https://www.notion.so/YaOng-4-Music-Meow-2d79c5a9397b4189aa7a3a037d5b752b?pvs=4
+
+
 # Music Meow
 
 ## Outline
